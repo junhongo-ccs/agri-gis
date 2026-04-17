@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Width Debug</title>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel hero">
+        <p class="eyebrow">Debug Width</p>
+        <h1>ブラウザ幅を確認するための最小ページ</h1>
+        <p class="lead">
+          このページは、レイアウト検証のために現在の viewport 幅を数値で出します。
+          既存 UI には影響しません。
+        </p>
+      </section>
+
+      <section class="panel metrics" aria-label="Viewport metrics">
+        <div class="metric">
+          <span class="label">innerWidth</span>
+          <strong id="innerWidth">-</strong>
+        </div>
+        <div class="metric">
+          <span class="label">clientWidth</span>
+          <strong id="clientWidth">-</strong>
+        </div>
+        <div class="metric">
+          <span class="label">innerHeight</span>
+          <strong id="innerHeight">-</strong>
+        </div>
+        <div class="metric">
+          <span class="label">devicePixelRatio</span>
+          <strong id="dpr">-</strong>
+        </div>
+      </section>
+
+      <section class="panel bands" aria-label="Breakpoints">
+        <div class="band" data-band="sm">sm 640px</div>
+        <div class="band" data-band="md">md 768px</div>
+        <div class="band" data-band="lg">lg 1024px</div>
+        <div class="band" data-band="xl">xl 1280px</div>
+        <div class="band" data-band="2xl">2xl 1536px</div>
+      </section>
+
+      <section class="panel ruler" aria-label="Width ruler">
+        <div class="ruler-track">
+          <div class="ruler-fill" id="rulerFill"></div>
+          <div class="ruler-marker" id="rulerMarker"></div>
+        </div>
+        <div class="ruler-labels">
+          <span>0</span>
+          <span>768</span>
+          <span>1024</span>
+          <span>1280</span>
+          <span>1536+</span>
+        </div>
+      </section>
+
+      <section class="panel status">
+        <p class="label">判定</p>
+        <p id="statusText">-</p>
+      </section>
+    </main>
+  </body>
+</html>

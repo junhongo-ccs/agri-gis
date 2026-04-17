@@ -1,0 +1,24 @@
+/speckit.specify Build a proof of concept that combines QGIS and Dify to analyze the character of tourism areas using only free public data.
+
+The system must help users understand differences between tourism areas that are not immediately obvious from map layers alone. The goal is not to replace map visualization, but to supplement it with natural-language interpretation, comparison, and audience-specific explanation.
+
+The proof of concept will use free public data such as OpenStreetMap, Wikimedia-related metadata, administrative boundaries, stations, roads, and public CSV datasets describing tourism spots or area attributes. QGIS will be responsible for spatial integration, feature generation, and map visualization. Dify with an LLM will be responsible for interpreting structured outputs from QGIS and generating grounded explanations.
+
+The system must support analyzing an area based on spatial and textual features such as point-of-interest density, category mix, walkability around stations, clustering of tourism spots, and keyword summaries derived from spot descriptions or related text metadata.
+
+Users must be able to ask questions such as:
+- What kind of tourism experience is this area suitable for?
+- How is area A different from area B?
+- Which area is better for a first-time visitor?
+- Which area feels calm and good for walking?
+- How should this area be described for a specific audience such as families or foreign visitors?
+
+The system must return:
+- a short impression label for each area
+- a short natural-language summary of the area
+- comparison text across multiple areas
+- explicit grounds for each answer using available indicators
+
+The system must avoid unsupported claims. It must not make hard assertions about safety, popularity, or future trends unless directly supported by data. It must present outputs as interpretations grounded in available indicators rather than as objective truth.
+
+Success means users can understand area differences, likely visitor fit, and tourism style more quickly than by reading raw map layers alone, and every answer includes interpretable reasons tied to the source data.

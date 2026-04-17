@@ -1,0 +1,88 @@
+{
+  "type": "FeatureCollection",
+  "name": "phase1_areas_template",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "area_id": "shinagawa",
+        "area_name": "Shinagawa",
+        "phase": "phase1",
+        "boundary_method": "manual_tourism_polygon",
+        "region_scope": "tokyo_south_central",
+        "theme": "gateway",
+        "status": "draft",
+        "north_edge": "TBD",
+        "south_edge": "TBD",
+        "east_edge": "TBD",
+        "west_edge": "TBD",
+        "center_point_reason": "Station-centered gateway and hotel district around Shinagawa Station.",
+        "boundary_notes": "Use a compact polygon covering the main station access area, hotel concentration, and immediate visitor-facing commercial zone. Exclude broad residential and logistics edges."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "area_id": "oimachi",
+        "area_name": "Oimachi",
+        "phase": "phase1",
+        "boundary_method": "manual_tourism_polygon",
+        "region_scope": "tokyo_south_central",
+        "theme": "redevelopment_mixed_urban",
+        "status": "draft",
+        "north_edge": "TBD",
+        "south_edge": "TBD",
+        "east_edge": "TBD",
+        "west_edge": "TBD",
+        "center_point_reason": "Station-centered mixed-use urban activity area around Oimachi Station.",
+        "boundary_notes": "Capture the station surroundings, retail streets, dining streets, and commercial complexes within a short walking range. Exclude wide residential and industrial edges."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "area_id": "shiba_park_tokyo_tower",
+        "area_name": "Shiba Park / Tokyo Tower",
+        "phase": "phase1",
+        "boundary_method": "manual_tourism_polygon",
+        "region_scope": "tokyo_south_central",
+        "theme": "landmark_park_walk",
+        "status": "draft",
+        "north_edge": "TBD",
+        "south_edge": "TBD",
+        "east_edge": "TBD",
+        "west_edge": "TBD",
+        "center_point_reason": "Landmark-centered walking zone linking Tokyo Tower, Shiba Park, and immediate heritage context.",
+        "boundary_notes": "Cover the main visitor routes between Tokyo Tower, Shiba Park, and nearby heritage assets that form one walkable experience. Exclude surrounding broad office areas."
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "area_id": "odaiba",
+        "area_name": "Odaiba",
+        "phase": "phase1",
+        "boundary_method": "manual_tourism_polygon",
+        "region_scope": "tokyo_south_central",
+        "theme": "waterfront_leisure",
+        "status": "draft",
+        "north_edge": "TBD",
+        "south_edge": "TBD",
+        "east_edge": "TBD",
+        "west_edge": "TBD",
+        "center_point_reason": "Visitor-facing waterfront leisure core rather than the entire reclaimed island area.",
+        "boundary_notes": "Include the main promenade, attractions, leisure malls, and park edges commonly experienced as one trip area. Exclude remote infrastructure and detached facilities."
+      },
+      "geometry": null
+    }
+  ]
+}

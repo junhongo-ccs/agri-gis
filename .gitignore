@@ -1,0 +1,10 @@
+web/node_modules/
+web/dist/
+web/.vite/
+web/.env
+web/.env.*
+!web/.env.example
+!web/.env.proxy.example
+data/boundaries/*.gpkg-wal
+data/boundaries/*.gpkg-shm
+*.pyc

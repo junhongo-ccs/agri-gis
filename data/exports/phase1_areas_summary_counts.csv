@@ -1,0 +1,5 @@
+fid,area_id,area_name,theme,status,cafe_count,restaurant_count,museum_count,hotel_count,station_count,area_km2,cafe_density,restaurant_density,museum_density,hotel_density,station_density
+2,shinagawa,品川,gateway,draft,27,53,5,7,5,1.978,13.65,26.79,2.53,3.54,2.53
+3,oimachi,大井町,redevelopment_mixed_urban,draft,10,16,0,3,3,0.282,35.46,56.74,0,10.64,10.64
+4,shiba_park_tokyo_tower,芝公園・東京タワー,landmark_park_walk,draft,16,38,0,2,3,0.747,21.42,50.87,0,2.68,4.02
+5,odaiba,お台場,waterfront_leisure,draft,18,29,5,2,12,4.592,3.92,6.32,1.09,0.44,2.61

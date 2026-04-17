@@ -1,0 +1,22 @@
+/speckit.plan Use QGIS for spatial processing and feature extraction, and Dify as the conversational layer for question intake and grounded response generation.
+
+Use free public datasets only. Start with OpenStreetMap for tourism POIs, stations, roads, and land-use-related context. Add administrative boundaries and any available public CSV or Wikimedia-derived metadata for tourism spot descriptions and category enrichment.
+
+Create QGIS outputs at area level, including:
+- POI counts and density
+- POI category ratios
+- distance to nearest station
+- walkable tourism spot counts within defined buffers
+- cluster information for tourism spots
+- extracted keyword summaries from available text metadata
+
+Pass only structured summaries and evidence fields into Dify. Do not pass raw map layers directly to the LLM. The LLM should generate:
+- impression labels
+- area summaries
+- area comparisons
+- audience-specific descriptions
+- explanations that cite the indicators used
+
+Include prompt constraints that forbid unsupported claims and require explicit grounding. Prefer short, interpretable answers over creative prose.
+
+The proof of concept may use a small number of sample areas first, then expand if the grounding quality is acceptable.

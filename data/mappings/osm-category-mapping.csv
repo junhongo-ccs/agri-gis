@@ -1,0 +1,48 @@
+source_key,source_value,normalized_category,include_flag,priority,rule_id,notes
+tourism,museum,culture_history,1,100,tourism_museum,direct tourism culture
+tourism,gallery,culture_history,1,100,tourism_gallery,art gallery
+tourism,attraction,culture_history,1,90,tourism_attraction,broad attraction fallback review per area
+tourism,viewpoint,nature_outdoor,1,100,tourism_viewpoint,scenic observation point
+tourism,artwork,culture_history,1,90,tourism_artwork,public art or sculpture
+tourism,theme_park,family_leisure,1,100,tourism_theme_park,clear family leisure signal
+tourism,zoo,family_leisure,1,100,tourism_zoo,clear family leisure signal
+tourism,aquarium,family_leisure,1,100,tourism_aquarium,clear family leisure signal
+tourism,hotel,lodging,1,100,tourism_hotel,accommodation
+tourism,hostel,lodging,1,100,tourism_hostel,accommodation
+tourism,guest_house,lodging,1,100,tourism_guest_house,accommodation
+tourism,apartment,lodging,1,80,tourism_apartment,include only when clearly stay use
+tourism,camp_site,nature_outdoor,1,90,tourism_camp_site,outdoor stay and recreation
+tourism,caravan_site,nature_outdoor,1,90,tourism_caravan_site,outdoor stay and recreation
+historic,*,culture_history,1,100,historic_any,historic features stay in culture_history
+amenity,place_of_worship,culture_history,1,100,amenity_place_of_worship,temples shrines churches
+building,temple,culture_history,1,95,building_temple,useful supplemental signal
+building,shrine,culture_history,1,95,building_shrine,useful supplemental signal
+amenity,restaurant,food_cafe,1,100,amenity_restaurant,core dining
+amenity,cafe,food_cafe,1,100,amenity_cafe,cafes and coffee shops
+amenity,fast_food,food_cafe,1,80,amenity_fast_food,keep but review overweight risk
+amenity,food_court,food_cafe,1,85,amenity_food_court,food cluster signal
+amenity,ice_cream,food_cafe,1,80,amenity_ice_cream,tourism-friendly snack spots
+amenity,bar,nightlife,1,100,amenity_bar,evening oriented
+amenity,pub,nightlife,1,100,amenity_pub,evening oriented
+amenity,biergarten,nightlife,1,90,amenity_biergarten,evening oriented
+amenity,nightclub,nightlife,1,100,amenity_nightclub,strong nightlife signal
+shop,mall,shopping_market,1,100,shop_mall,large shopping destination
+shop,department_store,shopping_market,1,100,shop_department_store,large shopping destination
+shop,gift,shopping_market,1,95,shop_gift,souvenir relevance
+shop,souvenir,shopping_market,1,100,shop_souvenir,direct tourism relevance
+shop,convenience,shopping_market,0,20,shop_convenience,optional low signal fallback
+amenity,marketplace,shopping_market,1,90,amenity_marketplace,market or shopping street
+shop,*,shopping_market,0,10,shop_any,disabled broad fallback by default
+leisure,park,nature_outdoor,1,100,leisure_park,urban green recreation
+leisure,garden,nature_outdoor,1,95,leisure_garden,gardens and landscaped spaces
+leisure,nature_reserve,nature_outdoor,1,95,leisure_nature_reserve,outdoor tourism relevance
+leisure,playground,family_leisure,1,80,leisure_playground,family oriented facility
+leisure,sports_centre,family_leisure,0,30,leisure_sports_centre,optional local-use heavy tag
+leisure,amusement_arcade,family_leisure,1,85,leisure_amusement_arcade,leisure facility
+railway,station,transport_gateway,1,100,railway_station,core transport node
+public_transport,station,transport_gateway,1,95,public_transport_station,use when separate from railway station
+amenity,bus_station,transport_gateway,0,40,amenity_bus_station,optional multimodal access signal
+natural,beach,nature_outdoor,1,85,natural_beach,include when present in sample areas
+natural,peak,nature_outdoor,1,80,natural_peak,scenic outdoor relevance
+waterway,riverbank,nature_outdoor,0,20,waterway_riverbank,prefer contextual use not poi count
+natural,water,nature_outdoor,0,20,natural_water,use only for named visitor-facing features
