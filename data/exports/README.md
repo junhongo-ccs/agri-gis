@@ -1,29 +1,24 @@
-# Exports
+# Agri Exports
 
 This directory stores structured outputs generated from the QGIS project.
 
-Recommended exports for the Phase 1 tourism PoC:
+Recommended exports for the Agri-GIS PoC:
 
-- `phase1_areas_summary_counts.csv`
-- `phase1_areas_evidence.csv`
-- optional per-area JSON payloads for Dify input
+- `agri_fields_summary.csv`
+- `agri_fields_evidence.csv`
+- optional per-field JSON payloads for Dify input
 
-Minimum expected columns for `phase1_areas_summary_counts.csv`:
+Minimum expected columns for `agri_fields_summary.csv`:
 
-- `area_id`
-- `area_name`
-- `theme`
-- `status`
-- `area_km2`
-- `cafe_count`
-- `restaurant_count`
-- `museum_count`
-- `hotel_count`
-- `station_count`
-- `cafe_density`
-- `restaurant_density`
-- `museum_density`
-- `hotel_density`
-- `station_density`
+- `field_id`
+- `field_name`
+- `field_type`
+- `area_ha`
+- `crop_type`
+- `soil_ph`
+- `last_pesticide_date`
+- `management_note`
+- `rotation_status`
+- `pest_pressure_note`
 
-Keep the CSV UTF-8 encoded and preserve stable `area_id` values so downstream prompts can reference the rows reliably.
+Keep the CSV UTF-8 encoded and preserve stable `field_id` values so downstream prompts can reference the rows reliably.

@@ -4,11 +4,11 @@
 
 Create the real summary CSV for the React screen and future Dify input:
 
-- `data/exports/phase1_areas_summary_counts.csv`
+- `data/exports/agri_fields_summary.csv`
 
 This checklist assumes the QGIS project already contains:
 
-- `phase1_areas_polygon`
+- `agri_fields_polygon`
 - the latest summary layer with count fields
 
 ## Target Columns
@@ -33,7 +33,7 @@ The exported CSV should contain these columns in this order:
 
 ## Step 1. Open The Existing Project
 
-1. Open [qgis/phase1-tourism-poc.qgz](C:/github/qgis-dify-tourism-poc/qgis/phase1-tourism-poc.qgz).
+1. Open [qgis/agri-fields-poc.qgz](C:/github/agri-gis/qgis/agri-fields-poc.qgz).
 2. Confirm the current summary layer is present.
 3. Open its attribute table before editing anything.
 
@@ -64,9 +64,9 @@ Before metric calculations:
 2. Choose `Export` -> `Save Features As...`
 3. Format: `GeoPackage`
 4. Save into:
-   - `data/boundaries/phase1-areas-working.gpkg`
+   - `data/boundaries/agri-fields-working.gpkg`
 5. Layer name:
-   - `phase1_areas_summary_counts_clean`
+   - `agri_fields_summary_clean`
 
 This gives you a stable layer for the next calculations.
 
@@ -74,14 +74,14 @@ This gives you a stable layer for the next calculations.
 
 If the summary layer is still in geographic coordinates:
 
-1. Right-click `phase1_areas_summary_counts_clean`
+1. Right-click `agri_fields_summary_clean`
 2. Choose `Export` -> `Save Features As...`
 3. Format: `GeoPackage`
 4. CRS:
    - `EPSG:6677`
    - or another Tokyo-friendly projected CRS already used in your project
 5. Layer name:
-   - `phase1_areas_summary_counts_metric`
+   - `agri_fields_summary_metric`
 
 Use the projected layer for area and density calculations.
 
@@ -91,7 +91,7 @@ Important:
 
 ## Step 5. Add `area_km2`
 
-Open the Field Calculator on `phase1_areas_summary_counts_metric`.
+Open the Field Calculator on `agri_fields_summary_metric`.
 
 Create a new field:
 
@@ -166,11 +166,11 @@ If a density looks obviously wrong, check:
 
 Once the metric layer looks correct:
 
-1. Right-click `phase1_areas_summary_counts_metric`
+1. Right-click `agri_fields_summary_metric`
 2. Choose `Export` -> `Save Features As...`
 3. Format: `Comma Separated Value [CSV]`
 4. File name:
-   - `data/exports/phase1_areas_summary_counts.csv`
+   - `data/exports/agri_fields_summary.csv`
 5. Layer options:
    - `GEOMETRY=AS_XYZ` should be disabled if geometry export is optional
    - or choose no geometry if that option is available in your QGIS dialog
@@ -185,7 +185,7 @@ Recommended:
 
 After the real export exists, copy or export the same CSV content to:
 
-- `web/public/exports/phase1_areas_summary_counts.csv`
+- `web/public/exports/agri_fields_summary.csv`
 
 That file is what the current React screen reads during local development.
 

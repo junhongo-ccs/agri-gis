@@ -1,22 +1,36 @@
-/speckit.plan Use QGIS for spatial processing and feature extraction, and Dify as the conversational layer for question intake and grounded response generation.
+/speckit.plan Build the Agri-GIS Intelligence PoC with QGIS, a web map UI, and Dify as the conversational layer for field intake, diagnosis guidance, and grounded response generation.
 
-Use free public datasets only. Start with OpenStreetMap for tourism POIs, stations, roads, and land-use-related context. Add administrative boundaries and any available public CSV or Wikimedia-derived metadata for tourism spot descriptions and category enrichment.
+Use field polygons as the core spatial unit. Start with a small set of demonstration fields and a field summary CSV that the web app can load. The selected field should be injected into `agri_context` and paired with one or more uploaded crop symptom images.
 
-Create QGIS outputs at area level, including:
-- POI counts and density
-- POI category ratios
-- distance to nearest station
-- walkable tourism spot counts within defined buffers
-- cluster information for tourism spots
-- extracted keyword summaries from available text metadata
+Use the following data and logic layers:
+- QGIS for field polygon preparation, area calculation, and attribute export
+- a field summary CSV with stable `field_id` values and key attributes such as `area_ha`, `crop_type`, `last_pesticide_date`, and `soil_ph`
+- a Dify knowledge base with pesticide label data such as dilution ratio, spray volume per 10a, and any usage constraints needed for the calculation
+- a code step for deterministic spray calculation so the LLM does not perform the arithmetic itself
 
-Pass only structured summaries and evidence fields into Dify. Do not pass raw map layers directly to the LLM. The LLM should generate:
-- impression labels
-- area summaries
-- area comparisons
-- audience-specific descriptions
-- explanations that cite the indicators used
+Create QGIS outputs at field level, including:
+- field area in hectares
+- crop and soil attributes
+- last pesticide application date or other field history fields
+- optional nearby environmental context if it helps interpretation
 
-Include prompt constraints that forbid unsupported claims and require explicit grounding. Prefer short, interpretable answers over creative prose.
+Pass only structured field summaries, selected image references, and evidence fields into Dify. Do not pass raw map layers directly to the LLM. The Dify workflow should generate:
+- a diagnosis-oriented summary
+- a practical next-step summary
+- spray volume and pesticide amount when a label is selected
+- explanations that cite the field attributes, image evidence, and label data used
 
-The proof of concept may use a small number of sample areas first, then expand if the grounding quality is acceptable.
+Define prompt and workflow constraints that:
+- forbid unsupported claims
+- require explicit grounding
+- keep the diagnosis language cautious
+- keep calculations deterministic
+- make the output short and operational rather than verbose
+
+Plan the work in phases:
+1. QGIS and data engineering
+2. Dify workflow and label knowledge preparation
+3. Web app refactoring for `agri_context` and image upload
+4. Validation with fixed field selections and end-to-end calculation checks
+
+The proof of concept may start with a small number of sample fields, then expand if the grounding quality and calculation correctness are acceptable. Acceptance means a user can select a field, upload an image, choose a pesticide label, and receive a traceable response with the calculated spray quantity and a cautious explanation.

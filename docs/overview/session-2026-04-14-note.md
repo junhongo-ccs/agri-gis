@@ -4,17 +4,17 @@
 
 To make the next QGIS session easier to resume, the repository now includes:
 
-- a CSV lookup table for OSM-to-tourism category mapping:
-  - `data/mappings/osm-category-mapping.csv`
+- a CSV lookup table for agricultural attribute mapping:
+  - `data/mappings/agri-attribute-mapping.csv`
 - an exports directory note with the expected summary CSV columns:
   - `data/exports/README.md`
 - a Dify payload schema draft based on the planned summary export:
-  - `docs/dify-schema-draft.md`
+  - `docs/dify/dify-schema-draft.md`
 - a Dify right-rail contract and prompt draft:
-  - `docs/dify-right-rail.md`
-  - `docs/dify-prompt-draft.md`
+  - `docs/dify/dify-right-rail.md`
+  - `docs/dify/dify-prompt-draft.md`
 - a setup checklist for the actual Dify app:
-  - `docs/dify-setup-checklist.md`
+  - `docs/dify/dify-setup-checklist.md`
 
 ## Why This Helps
 
@@ -39,6 +39,6 @@ The next useful implementation step is to finish the Dify app and connect it to 
 
 ## Migration Note
 
-The current handoff target is moving to Mac.
+The current handoff target is the Agri-GIS PoC.
 
 Keep the Dify API key out of the client and use the local proxy or backend only.
