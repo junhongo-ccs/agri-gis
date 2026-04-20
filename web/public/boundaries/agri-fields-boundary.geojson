@@ -1,0 +1,240 @@
+{
+  "type": "FeatureCollection",
+  "name": "agri-fields-boundary",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": 1,
+        "field_id": "field_001",
+        "field_name": "与田浦",
+        "field_type": "managed_field",
+        "crop_type": "rice",
+        "last_pesticide_date": "2026-04-10",
+        "soil_ph": 6.3,
+        "management_note": "水位は安定。葉色はおおむね均一で、畦際に軽微な雑草が見られる。",
+        "rotation_status": "current",
+        "pest_pressure_note": "none observed",
+        "area_ha": 10.29,
+        "suspected_pest": "なし"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              140.54391760114672,
+              35.92207209559672
+            ],
+            [
+              140.5414916713828,
+              35.923398044922955
+            ],
+            [
+              140.53951538531663,
+              35.92089446933007
+            ],
+            [
+              140.54063850949456,
+              35.92026291145233
+            ],
+            [
+              140.54008132702327,
+              35.91947150740314
+            ],
+            [
+              140.54094483969027,
+              35.91844798958142
+            ],
+            [
+              140.54391760114672,
+              35.92207209559672
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": 2,
+        "field_id": "field_002",
+        "field_name": "与田浦北",
+        "field_type": "managed_field",
+        "crop_type": "vegetable",
+        "last_pesticide_date": "2026-03-12",
+        "soil_ph": 5.4,
+        "management_note": "圃場内で生育ムラがあり、下葉に黄化が見られる。soil_ph は 5.4。",
+        "rotation_status": "current",
+        "pest_pressure_note": "low",
+        "area_ha": 12.43,
+        "suspected_pest": "アブラムシ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              140.53173400351673,
+              35.9215803639598
+            ],
+            [
+              140.52955539515398,
+              35.91759644207848
+            ],
+            [
+              140.5321083120301,
+              35.91668662514952
+            ],
+            [
+              140.5344000220092,
+              35.92057725566106
+            ],
+            [
+              140.53173400351673,
+              35.9215803639598
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": 3,
+        "field_id": "field_003",
+        "field_name": "与田浦東",
+        "field_type": "managed_field",
+        "crop_type": "vegetable",
+        "last_pesticide_date": "2026-03-28",
+        "soil_ph": 6.1,
+        "management_note": "川沿いで地表が湿りやすく、下葉に小さな斑点が散見される。",
+        "rotation_status": "current",
+        "pest_pressure_note": "medium",
+        "area_ha": 12.33,
+        "suspected_pest": "ハモグリバエ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              140.53708507832442,
+              35.91958940754234
+            ],
+            [
+              140.5344756276325,
+              35.920545952586636
+            ],
+            [
+              140.53218350772354,
+              35.91660903350671
+            ],
+            [
+              140.53479340325603,
+              35.915714258800186
+            ],
+            [
+              140.53708507832442,
+              35.91958940754234
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": 4,
+        "field_id": "field_005",
+        "field_name": "与田浦南",
+        "field_type": "managed_field",
+        "crop_type": "rice",
+        "last_pesticide_date": "2026-04-14",
+        "soil_ph": 6,
+        "management_note": "畦際の雑草が早く立ち上がり、周縁部で作物との競合が見られる。",
+        "rotation_status": "current",
+        "pest_pressure_note": "medium",
+        "area_ha": 13.74,
+        "suspected_pest": "イネミズゾウムシ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              140.53214434912783,
+              35.916470384243624
+            ],
+            [
+              140.5347919047435,
+              35.91554452878361
+            ],
+            [
+              140.5323258181995,
+              35.91122285440566
+            ],
+            [
+              140.52967878174528,
+              35.91219494494808
+            ],
+            [
+              140.53214434912783,
+              35.916470384243624
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "fid": 5,
+        "field_id": "field_004",
+        "field_name": "与田浦西",
+        "field_type": "managed_field",
+        "crop_type": "mixed_crop",
+        "last_pesticide_date": "2026-02-26",
+        "soil_ph": 6.8,
+        "management_note": "前作残渣が一部に残り、生育のそろいにばらつきがある。",
+        "rotation_status": "rotation",
+        "pest_pressure_note": "low",
+        "area_ha": 13.17,
+        "suspected_pest": "ヨトウムシ"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              140.5271263838276,
+              35.91315099970304
+            ],
+            [
+              140.5294784382668,
+              35.917473441919405
+            ],
+            [
+              140.53204991357484,
+              35.91651722623347
+            ],
+            [
+              140.52964125233882,
+              35.91224145502329
+            ],
+            [
+              140.5271263838276,
+              35.91315099970304
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

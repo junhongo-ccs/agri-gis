@@ -1,60 +1,70 @@
-function serializeArea(area) {
-  if (!area) return null
+import {
+  formatCropType,
+  formatFieldType,
+  formatManagementNote,
+  formatPestPressure,
+  formatRotationStatus,
+} from './agriFormat'
 
-  return {
-    area_id: area.id,
-    area_name: area.name,
-    theme: area.tone,
-    status: area.status,
-    area_km2: area.areaKm2,
-    counts: area.counts,
-    densities: area.densities,
-    strongest_metric: area.strongestMetric
-      ? {
-          key: area.strongestMetric.key,
-          label: area.strongestMetric.label,
-          value: area.strongestMetric.value,
-        }
-      : null,
-    note: area.note,
-  }
+function normalizeTargetCrop(cropType) {
+  const normalized = formatCropType(cropType)
+  if (!normalized || normalized === '—') return ''
+  if (normalized === '野菜') return '野菜類'
+  if (normalized === '果樹') return '果樹類'
+  if (normalized === '水稲') return '稲'
+  if (normalized === '複合作物') return '野菜類'
+  return normalized
 }
 
-function isExplicitComparisonQuestion(question) {
-  if (!question) return false
-  return /(?:比較|比べ|比べて|比べると|違い|差|どちら|どっち|くらべ|vs)/i.test(question)
+function normalizeTargetPest(suspectedPest) {
+  const normalized = suspectedPest == null ? '' : String(suspectedPest).trim()
+  if (!normalized || normalized === 'なし' || normalized === '—') return ''
+  if (normalized.endsWith('類')) return normalized
+  return `${normalized}類`
 }
 
-export function buildTourismContext({ areas, selectedArea, comparisonArea, question }) {
-  const shouldCompare = isExplicitComparisonQuestion(question) && comparisonArea
+export function buildAgriContext({ field, question }) {
+  const targetCrop = field ? normalizeTargetCrop(field.cropType) : ''
+  const targetPest = field ? normalizeTargetPest(field.suspectedPest) : ''
+
   return {
-    schema_version: 'phase1.v1',
+    schema_version: 'agri.v1',
+    task_type: targetPest ? 'pest_recommendation' : 'field_summary',
+    target_crop: targetCrop,
+    target_pest: targetPest,
     generated_at: new Date().toISOString(),
-    selection_mode: shouldCompare ? 'compare' : 'single',
+    field: field
+      ? {
+        field_id: field.id,
+        field_name: field.name,
+        field_type: formatFieldType(field.fieldType),
+        area_ha: field.areaHa,
+        crop_type: formatCropType(field.cropType),
+        soil_ph: field.soilPh,
+        last_pesticide_date: field.lastPesticideDate,
+        suspected_pest: field.suspectedPest,
+        observation_note: formatManagementNote(field.managementNote),
+        management_note: formatManagementNote(field.managementNote),
+        rotation_status: formatRotationStatus(field.rotationStatus),
+        pest_pressure_note: formatPestPressure(field.pestPressureNote),
+      }
+      : null,
+    query: question,
     question,
-    selected_area_id: selectedArea?.id ?? null,
-    comparison_area_id: shouldCompare ? comparisonArea?.id ?? null : null,
-    selected_area: serializeArea(selectedArea),
-    comparison_area: shouldCompare ? serializeArea(comparisonArea) : null,
-    available_areas: areas.map(serializeArea),
   }
 }
 
-export function createLocalAssistantReply({ question, selectedArea, comparisonArea }) {
-  if (!selectedArea) {
-    return 'エリアの読み込み中です。しばらく待ってからもう一度試してください。'
+export function createLocalAssistantReply({ question, field }) {
+  if (!field) {
+    return '圃場データを読み込み中です。しばらく待ってからもう一度試してください。'
   }
 
-  const strongestMetric = selectedArea.strongestMetric
-  const strongestLabel = strongestMetric?.label ?? '指標'
-  const strongestValue =
-    strongestMetric && selectedArea.counts[strongestMetric.key] !== undefined
-      ? selectedArea.counts[strongestMetric.key]
-      : null
-  const questionPrefix = question ? `「${question}」に対して、` : ''
-  const compareSuffix = question && isExplicitComparisonQuestion(question) && comparisonArea ? ` ${comparisonArea.name} と比べると、` : ''
-
-  return `${questionPrefix}${selectedArea.name} は ${selectedArea.tone} の文脈で、${strongestLabel} ${strongestValue ?? '—'}件が目立ちます。${compareSuffix}件数と密度を根拠に、Dify ではここから自然文へ整形する想定です。`
+  const prefix = question ? `「${question}」に対して、` : ''
+  const pestLine =
+    field.suspectedPest && field.suspectedPest !== 'なし'
+      ? `害虫報告は ${field.suspectedPest} です。`
+      : '現時点で特定の害虫報告はありません。'
+  return `${prefix}${field.name}（${field.areaHa ?? '—'} ha）は、作物：${formatCropType(field.cropType)}、土壌 pH ${field.soilPh ?? '—'} の圃場です。${pestLine} 病害虫状況：${formatPestPressure(field.pestPressureNote)}。Dify 接続後は、圃場コンテキストをもとに詳細な説明が返ります。`
 }
 
 async function readResponseBody(response) {
@@ -72,7 +82,7 @@ export async function postChatMessage({ endpoint, userId, conversationId, questi
   const body = {
     query: question,
     inputs: {
-      tourism_context: context,
+      agri_context: context,
     },
     response_mode: 'blocking',
     user: userId,

@@ -2,6 +2,10 @@
 
 This document is the handoff note for the next Codex session.
 
+## Latest Session Update
+
+- [Session Handoff - 2026-04-21](/Users/hongoujun/Documents/GitHub/agri-gis/docs/overview/session-2026-04-21-handoff.md)
+
 ## One-Line Summary
 
 We are converting the old QGIS-Dify tourism PoC into an Agri-GIS Intelligence PoC for field-level pest and disease support, pesticide spray calculation, and field management.
