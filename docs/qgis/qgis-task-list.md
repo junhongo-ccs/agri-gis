@@ -12,6 +12,25 @@
 - Dify が利用できる安定した入力値の集合
 - Web アプリと `agri_context` 契約に一致するサマリー CSV
 
+## 現在の到達点
+
+QGIS 側は、次の状態まで到達しています。
+
+- Agri 用の QGIS プロジェクトは `qgis/agri-fields-poc-agri.qgz`
+- 作業用 GeoPackage は `data/boundaries/agri-fields-working.gpkg`
+- 圃場ポリゴンは 5 件
+- 1 件ごとの属性は入力済み
+- `area_ha` は計算済みで丸め済み
+- サマリー CSV は `data/exports/agri_fields_summary.csv`
+- Web 参照用の同内容 CSV は `web/dist/exports/agri_fields_summary.csv`
+
+現時点での主な残作業は、QGIS そのものよりも次の周辺領域です。
+
+- `agri_context` を CSV 形に合わせた実装
+- Web 側の CSV 読み込みと payload 組み立て
+- Dify への受け渡しと応答整形
+- 必要なら追加の補助列や evidence CSV の検討
+
 ## QGIS の逆算順
 
 CSV を出力する直前の状態から、Web と Dify の契約を起点に逆算すると、QGIS の作業は次の順番になります。
@@ -100,7 +119,9 @@ CSV を出力する直前の状態から、Web と Dify の契約を起点に逆
 - `rotation_status`
 - `pest_pressure_note`
 
-必要に応じて追加する運用列:
+現在の実装では、`owner_name` は CSV の必須列ではなく、必要に応じて `agri_context.context` 側へ載せる扱いにしている。
+
+必要に応じて将来追加する運用列:
 
 - `source_type`
 - `value_origin`
@@ -194,6 +215,11 @@ CSV を出力する直前の状態から、Web と Dify の契約を起点に逆
 - 出力が意図した `agri_context` 形状と一致する
 - Web アプリが余分な整形なしで読める
 
+補足:
+
+- 現在は `field_id`, `field_name`, `field_type`, `area_ha`, `crop_type`, `soil_ph`, `last_pesticide_date`, `management_note`, `rotation_status`, `pest_pressure_note` を出力している
+- `owner_name` は必要なら `agri_context.context` に載せる
+
 ## タスクグループ 9. QGIS 出力を Web 契約に合わせる
 
 1. 出力した CSV 列を Web アプリの期待値と比較する。
@@ -233,6 +259,8 @@ CSV を出力する直前の状態から、Web と Dify の契約を起点に逆
 1. 必要なフィールド入力値が作業レイヤーで正規化されている。
 1. `data/exports/agri_fields_summary.csv` が合意したスキーマと一致している。
 1. エクスポートされたフィールドが `agri_context` 契約と一致している。
+
+現在はこの最小構成を満たしているため、次の重点は Web と Dify の接続に移っています。
 
 ## 実行順のおすすめ
 

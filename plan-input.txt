@@ -1,18 +1,24 @@
 /speckit.plan Build the Agri-GIS Intelligence PoC with QGIS, a web map UI, and Dify as the conversational layer for field intake, diagnosis guidance, and grounded response generation.
 
-Use field polygons as the core spatial unit. Start with a small set of demonstration fields and a field summary CSV that the web app can load. The selected field should be injected into `agri_context` and paired with one or more uploaded crop symptom images.
+Current state:
+- QGIS field polygons, field attributes, and `area_ha` calculation are already in place
+- the source CSV is `data/exports/agri_fields_summary.csv`
+- the built-web copy is `web/dist/exports/agri_fields_summary.csv`
+- the active context contract is `agri_context`
+
+Frontend constraint:
+- preserve the existing UI structure, layout, breakpoints, and show/hide behavior
+- update only labels, copy, short explanations, and data bindings
+- do not redesign the screen just to support Agri content
+- treat the current web layout as a fixed interaction shell that should be reused as-is
+
+Use field polygons as the core spatial unit. The selected field should be injected into `agri_context` and paired with one or more uploaded crop symptom images when present.
 
 Use the following data and logic layers:
 - QGIS for field polygon preparation, area calculation, and attribute export
-- a field summary CSV with stable `field_id` values and key attributes such as `area_ha`, `crop_type`, `last_pesticide_date`, and `soil_ph`
+- a field summary CSV with stable `field_id` values and key attributes such as `field_name`, `field_type`, `area_ha`, `crop_type`, `last_pesticide_date`, `soil_ph`, `management_note`, `rotation_status`, and `pest_pressure_note`
 - a Dify knowledge base with pesticide label data such as dilution ratio, spray volume per 10a, and any usage constraints needed for the calculation
 - a code step for deterministic spray calculation so the LLM does not perform the arithmetic itself
-
-Create QGIS outputs at field level, including:
-- field area in hectares
-- crop and soil attributes
-- last pesticide application date or other field history fields
-- optional nearby environmental context if it helps interpretation
 
 Pass only structured field summaries, selected image references, and evidence fields into Dify. Do not pass raw map layers directly to the LLM. The Dify workflow should generate:
 - a diagnosis-oriented summary
@@ -27,10 +33,10 @@ Define prompt and workflow constraints that:
 - keep calculations deterministic
 - make the output short and operational rather than verbose
 
-Plan the work in phases:
-1. QGIS and data engineering
+Plan the remaining work in phases:
+1. Web app payload assembly for `agri_context`
 2. Dify workflow and label knowledge preparation
-3. Web app refactoring for `agri_context` and image upload
+3. Web app alignment for image upload and response rendering
 4. Validation with fixed field selections and end-to-end calculation checks
 
-The proof of concept may start with a small number of sample fields, then expand if the grounding quality and calculation correctness are acceptable. Acceptance means a user can select a field, upload an image, choose a pesticide label, and receive a traceable response with the calculated spray quantity and a cautious explanation.
+The proof of concept now starts from the existing Agri field dataset rather than from a blank QGIS build. Acceptance means a user can select a field, upload an image, choose a pesticide label, and receive a traceable response with the calculated spray quantity and a cautious explanation.

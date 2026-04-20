@@ -34,73 +34,44 @@ These fields should exist before JSON conversion:
 - `rotation_status`
 - `pest_pressure_note`
 
-## Suggested Evidence CSV Columns
+## Optional Fields
 
-If an evidence table is exported, use:
+These fields may be passed if the frontend has them, but they are not required by the current CSV export:
 
-- `field_id`
-- `evidence_type`
-- `evidence_key`
-- `evidence_value`
-- `source_dataset`
-- `source_record_ref`
-- `note`
+- `owner_name`
+- `image_evidence_note`
+- `image_reference`
+- `selected_label`
 
 ## Single Field Payload
 
 ```json
 {
   "schema_version": "agri.v1",
-  "generated_at": "2026-04-17T00:00:00+09:00",
+  "generated_at": "2026-04-20T00:00:00+09:00",
   "field": {
     "field_id": "field_001",
-    "field_name": "Demo Field A",
+    "field_name": "与田浦",
     "field_type": "managed_field",
-    "metadata": {
-      "area_ha": 1.82,
-      "crop_type": "rice",
-      "soil_ph": 5.8,
-      "last_pesticide_date": "2026-04-01"
-    },
-    "context": {
-      "management_note": "Early-season field with recent inspection",
-      "rotation_status": "current_crop_continuous",
-      "pest_pressure_note": "No confirmed outbreak",
-      "nearest_access_point_distance_m": 180,
-      "nearby_risk_flag_count": 2,
-      "buffer_context_summary": "Bordering road and drainage edge"
-    },
-    "image_evidence": {
-      "image_reference": "upload_abc123",
-      "image_evidence_note": "Leaf discoloration visible on uploaded photo",
-      "symptom_confidence_note": "Low to moderate confidence"
-    },
+    "area_ha": 10.09,
+    "crop_type": "mixed_crop",
+    "soil_ph": 6.3,
+    "last_pesticide_date": "2026-04-10",
+    "management_note": "routine management",
+    "rotation_status": "current",
+    "pest_pressure_note": "none observed"
+  },
+  "context": {
+    "owner_name": "田中",
+    "image_evidence_note": "symptom note if available",
+    "image_reference": "upload_abc123",
     "selected_label": {
       "product_name": "Test Pesticide A",
       "spray_volume_per_10a_l": 100,
       "dilution_ratio": 1000
-    },
-    "evidence": [
-      {
-        "type": "field_area",
-        "key": "area_ha",
-        "value": 1.82,
-        "source_dataset": "qgis_field_layer"
-      },
-      {
-        "type": "soil",
-        "key": "soil_ph",
-        "value": 5.8,
-        "source_dataset": "soil_layer"
-      },
-      {
-        "type": "history",
-        "key": "last_pesticide_date",
-        "value": "2026-04-01",
-        "source_dataset": "field_history"
-      }
-    ]
-  }
+    }
+  },
+  "question": "この圃場はどんな特徴がありますか？"
 }
 ```
 
@@ -113,7 +84,7 @@ Use a separate calculation payload so the code step can compute the result deter
   "schema_version": "agri.v1",
   "field_id": "field_001",
   "calculation_inputs": {
-    "area_ha": 1.82,
+    "area_ha": 10.09,
     "spray_volume_per_10a_l": 100,
     "dilution_ratio": 1000
   }
@@ -149,13 +120,13 @@ The CSV-to-JSON transformation can be implemented later with a small script usin
 | `field_id` | `field.field_id` |
 | `field_name` | `field.field_name` |
 | `field_type` | `field.field_type` |
-| `area_ha` | `field.metadata.area_ha` |
-| `crop_type` | `field.metadata.crop_type` |
-| `soil_ph` | `field.metadata.soil_ph` |
-| `last_pesticide_date` | `field.metadata.last_pesticide_date` |
-| `management_note` | `field.context.management_note` |
-| `rotation_status` | `field.context.rotation_status` |
-| `pest_pressure_note` | `field.context.pest_pressure_note` |
+| `area_ha` | `field.area_ha` |
+| `crop_type` | `field.crop_type` |
+| `soil_ph` | `field.soil_ph` |
+| `last_pesticide_date` | `field.last_pesticide_date` |
+| `management_note` | `field.management_note` |
+| `rotation_status` | `field.rotation_status` |
+| `pest_pressure_note` | `field.pest_pressure_note` |
 
 ## Next Data Task
 
@@ -164,7 +135,7 @@ The next data pass should produce a clean export that satisfies the required sum
 Recommended immediate sequence:
 
 1. open the QGIS project for the Agri-GIS demo fields
-2. clean field names in the latest summary layer
-3. save a stable copy such as `agri_fields_summary_clean`
-4. add `area_ha` and any required history or soil fields
+2. confirm the 5-row summary export is up to date
+3. keep `area_ha` rounded consistently
+4. align the frontend payload with the current CSV columns
 5. export the final summary CSV into `data/exports/agri_fields_summary.csv`

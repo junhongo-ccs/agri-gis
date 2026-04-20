@@ -74,6 +74,17 @@ These are intentionally minimal because the copy source repo still exists:
 - [web/package.json](C:/github/agri-gis/web/package.json)
 - [web/package-lock.json](C:/github/agri-gis/web/package-lock.json)
 
+### Current working outputs
+
+The current Agri working set is now centered on these artifacts:
+
+- [qgis/agri-fields-poc-agri.qgz](C:/github/agri-gis/qgis/agri-fields-poc-agri.qgz)
+- [data/boundaries/agri-fields-working.gpkg](C:/github/agri-gis/data/boundaries/agri-fields-working.gpkg)
+- [data/exports/agri_fields_summary.csv](C:/github/agri-gis/data/exports/agri_fields_summary.csv)
+- [web/dist/exports/agri_fields_summary.csv](C:/github/agri-gis/web/dist/exports/agri_fields_summary.csv)
+- [docs/dify/dify-schema-draft.md](C:/github/agri-gis/docs/dify/dify-schema-draft.md)
+- [docs/dify/dify-prompt-canonical.md](C:/github/agri-gis/docs/dify/dify-prompt-canonical.md)
+
 ## Core Project Spec
 
 ### Overview
@@ -91,13 +102,19 @@ The key idea is to combine spatial data from QGIS with Dify responses so the out
 The intended field schema is:
 
 - `field_id`
-- `owner_name`
+- `field_name`
+- `field_type`
 - `area_ha`
 - `crop_type`
 - `last_pesticide_date`
 - `soil_ph`
+- `management_note`
+- `rotation_status`
+- `pest_pressure_note`
 
 The front end should send the selected field as `agri_context`.
+
+`owner_name` is treated as optional context data rather than a required export column in the current CSV.
 
 ### Dify logic
 
@@ -125,19 +142,19 @@ The UI should support:
 
 ## Most Important Remaining Work
 
-1. Build a new [qgis/agri-fields-poc-agri.qgz](C:/github/agri-gis/qgis/agri-fields-poc-agri.qgz) for the Agri use case.
-2. Make [data/boundaries/agri-fields-working.gpkg](C:/github/agri-gis/data/boundaries/agri-fields-working.gpkg) truly field-oriented.
-3. Finalize the columns and values in [data/exports/agri_fields_summary.csv](C:/github/agri-gis/data/exports/agri_fields_summary.csv).
-4. Fix the `agri_context` JSON schema to match the actual exported data.
-5. Bring the web app and Dify contract into final alignment.
+1. Wire the web app to build `agri_context` from the current Agri CSV.
+2. Confirm the frontend reads `web/dist/exports/agri_fields_summary.csv` consistently.
+3. Finalize the local proxy and Dify request shape.
+4. Decide whether to add an evidence CSV or keep the current summary-only flow.
+5. Keep the QGIS outputs stable while the UI and Dify layers are tuned.
 
 ## Current Priority Order
 
-1. QGIS project structure
-2. boundary and export data
-3. `agri_context` schema
-4. web alignment
-5. Dify workflow polish
+1. `agri_context` schema and frontend payload assembly
+2. web alignment
+3. Dify workflow polish
+4. optional evidence CSV or supplemental fields
+5. QGIS refinement only if new data requirements appear
 
 ## Hard Rules
 
@@ -145,7 +162,7 @@ The UI should support:
 - Keep calculations deterministic in code, not in free-form LLM text.
 - Do not mix calculation logic and explanation logic.
 - The old tourism docs are no longer the source of truth.
-- The QGIS project needs real internal Agri field structure, not just renamed files.
+- The QGIS project now already has a real Agri field structure, so further edits should be driven by new data requirements rather than by schema cleanup alone.
 
 ## Files That Still Need Care
 

@@ -31,11 +31,29 @@ The core flow is:
 - [docs/dify/dify-design-plan.md](docs/dify/dify-design-plan.md)
 - [docs/dify/dify-schema-draft.md](docs/dify/dify-schema-draft.md)
 
+## Current Working Outputs
+
+- [qgis/agri-fields-poc-agri.qgz](qgis/agri-fields-poc-agri.qgz)
+- [data/boundaries/agri-fields-working.gpkg](data/boundaries/agri-fields-working.gpkg)
+- [data/exports/agri_fields_summary.csv](data/exports/agri_fields_summary.csv)
+- [web/dist/exports/agri_fields_summary.csv](web/dist/exports/agri_fields_summary.csv)
+
+These files represent the current Agri working set:
+
+- 5 field polygons
+- stable `field_id` values
+- computed `area_ha`
+- summary rows ready for `agri_context`
+
 ## Development Notes
 
 - Keep the API key server-side only.
 - Keep the spray calculation in code, not in free-form LLM text.
 - Keep `agri_context` as the primary structured input contract.
+
+## Current Focus
+
+The QGIS field data is already in place. The next work is to wire the web app to build `agri_context` from the summary CSV, then align the Dify workflow and response rendering.
 
 ## Status
 
