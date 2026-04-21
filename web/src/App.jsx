@@ -469,13 +469,18 @@ function App() {
 
           <aside className="flex h-full min-h-0 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-slate-900/95 p-4 text-white shadow-[0_24px_60px_rgba(15,23,42,0.10)] sm:p-5">
             <div className="shrink-0">
-              <h2 className="mt-1 text-[1rem] font-semibold tracking-tight sm:text-[1.25rem]">{selectedField?.name ?? '圃場を選択してください'}</h2>
+              <h2 className="mt-1 flex items-center gap-1.5 text-[1rem] font-semibold tracking-tight sm:text-[1.25rem]">
+                <span className="material-symbols-rounded text-[1.05em] text-white" aria-hidden="true">
+                  location_on
+                </span>
+                <span>{selectedField?.name ?? '圃場を選択してください'}</span>
+              </h2>
               <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.84rem] leading-[1.35] text-slate-300">
                 {selectedField ? (
                   <>
                     <span>{getFieldSummary(selectedField)}</span>
                     <span className="hidden h-1 w-1 rounded-full bg-slate-500 sm:inline-block" />
-                    <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-2.5 py-0.5 text-[0.76rem] text-emerald-100">
+                    <span className="rounded-full border border-amber-300/25 bg-amber-400/10 px-2.5 py-0.5 text-[0.76rem] text-amber-100">
                       {getFieldStatus(selectedField)}
                     </span>
                   </>
@@ -487,7 +492,7 @@ function App() {
                 <div className="mt-3">
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-[0.8rem] text-slate-100 transition-colors hover:border-emerald-300/35 hover:bg-emerald-400/10"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/5 px-3 py-1.5 text-[0.8rem] text-slate-100 transition-colors hover:border-emerald-300/35 hover:bg-emerald-400/10"
                     aria-expanded={isFieldDetailsOpen}
                     aria-controls="field-details-panel"
                     onClick={() => setIsFieldDetailsOpen((current) => !current)}
