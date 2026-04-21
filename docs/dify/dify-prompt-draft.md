@@ -1,5 +1,11 @@
 # Dify Prompt Draft
 
+Canonical is now split by node:
+
+- [dify-prompt-llm1-canonical.md](./dify-prompt-llm1-canonical.md)
+- [dify-prompt-llm2-canonical.md](./dify-prompt-llm2-canonical.md)
+- [dify-prompt-llm3-canonical.md](./dify-prompt-llm3-canonical.md)
+
 ## Goal
 
 Use the selected-field payload as the only grounded source for answers.
@@ -21,6 +27,12 @@ Answer in Japanese.
 Use only the information in `agri_context`.
 
 Do not claim crop health, safety, yield, or pesticide necessity unless the payload or calculation result explicitly supports it.
+
+Never return an empty answer string. If evidence is insufficient, return one short limitation sentence in Japanese.
+
+If `agri_context.target_issue_type` is `disease`, treat it as a disease scenario.
+If `agri_context.target_issue_type` is `pest`, treat it as a pest scenario.
+If `agri_context.pesticide_candidates` is present, keep pesticide mentions strictly within that list.
 
 If evidence is weak or mixed, say that plainly.
 

@@ -1,0 +1,22 @@
+{
+  "schema_version": "agri.v1",
+  "task_type": "issue_recommendation",
+  "target_crop": "稲",
+  "target_issue_type": "disease",
+  "target_issue": "いもち病",
+  "target_pest": "いもち病",
+  "query": "病斑が広がっている。対応候補は？",
+  "field": {
+    "field_id": "field_001",
+    "field_name": "与田浦",
+    "field_type": "管理圃場",
+    "area_ha": 10.29,
+    "crop_type": "水稲",
+    "soil_ph": 6.3,
+    "last_pesticide_date": "2026-04-10",
+    "suspected_pest": "いもち病",
+    "management_note": "葉身に病斑が見られ、病害拡大の疑いがあります。",
+    "rotation_status": "現行",
+    "pest_pressure_note": "高"
+  }
+}

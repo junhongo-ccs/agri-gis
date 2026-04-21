@@ -18,6 +18,7 @@ The core flow is:
 - `docs/design/` - product, scope, and UI design notes
 - `docs/qgis/` - QGIS workflow and export checklists
 - `docs/dify/` - Dify schema, prompts, and setup notes
+- `data/rag/` - Dify Knowledge に投入するRAGシードCSV
 - `docs/ops/` - deployment notes
 - `docs/legacy/` - older PC-view planning docs kept for reference
 

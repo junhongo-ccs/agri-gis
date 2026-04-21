@@ -1,0 +1,9 @@
+record_id,scenario_type,target_crop,target_issue,target_issue_type,product_name,pest_name,disease_name,dosage_l_per_10a,dilution_ratio,application_timing,notes,source_url
+R001,disease,稲,いもち病,disease,ブラシンフロアブル,,いもち病,0.1,1000倍,初発期〜拡大初期,病斑拡大抑制の基本候補,https://example.local/agri/rice-blast-01
+R002,disease,稲,いもち病,disease,オリゼメート粒剤,,いもち病,3.0,粒剤,発生前〜初発期,予防寄りの候補,https://example.local/agri/rice-blast-02
+R003,pest,野菜類,アブラムシ類,pest,スタークル顆粒水溶剤,アブラムシ類,,0.05,2000倍,発生初期,吸汁害虫向け候補,https://example.local/agri/aphid-01
+R004,pest,野菜類,ハモグリバエ類,pest,アファーム乳剤,ハモグリバエ類,,0.05,2000倍,幼虫食入初期,葉内食害の拡大抑制候補,https://example.local/agri/leafminer-01
+R005,pest,野菜類,ヨトウムシ類,pest,プレバソンフロアブル5,ヨトウムシ類,,0.02,4000倍,若齢幼虫期,チョウ目幼虫対策候補,https://example.local/agri/armyworm-01
+R006,pest,稲,イネミズゾウムシ類,pest,スタークル粒剤,イネミズゾウムシ類,,3.0,粒剤,発生初期,水稲の初期食害対策候補,https://example.local/agri/rice-weevil-01
+R007,disease,野菜類,べと病,disease,リドミルゴールドMZ,,べと病,0.25,1000倍,初発前後,湿潤条件での病害対策候補,https://example.local/agri/downy-mildew-01
+R008,disease,野菜類,うどんこ病,disease,トリフミン水和剤,,うどんこ病,0.033,3000倍,発生初期,白粉症状の拡大抑制候補,https://example.local/agri/powdery-mildew-01

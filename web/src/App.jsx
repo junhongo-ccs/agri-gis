@@ -11,15 +11,20 @@ import {
 } from './agriFormat'
 import { buildAgriContext, createLocalAssistantReply, postChatMessage } from './difyChat'
 
-const fieldPalette = {
-  field_001: { fill: '#86efac', stroke: '#15803d' },
-  field_002: { fill: '#4ade80', stroke: '#166534' },
-  field_003: { fill: '#facc15', stroke: '#a16207' },
-  field_004: { fill: '#22c55e', stroke: '#166534' },
-  field_005: { fill: '#84cc16', stroke: '#3f6212' },
+const issuePalette = {
+  disease: { fill: '#f3c7c2', stroke: '#9a4f48' },
+  pest: { fill: '#9fd8c5', stroke: '#2f7563' },
 }
 
-const defaultPalette = { fill: '#86efac', stroke: '#15803d' }
+const fieldIssueType = {
+  field_001: 'disease',
+  field_002: 'pest',
+  field_003: 'pest',
+  field_004: 'pest',
+  field_005: 'pest',
+}
+
+const defaultPalette = issuePalette.pest
 
 function createMessageId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -125,13 +130,27 @@ function getFieldStatus(field) {
 }
 
 function applyFieldScenario(field) {
-  if (!field || field.id !== 'field_001') return field
-  return {
-    ...field,
-    suspectedPest: 'いもち病',
-    pestPressureNote: 'high',
-    managementNote: '葉身に病斑が見られ、病害拡大の疑いがあります。',
+  if (!field) return field
+
+  if (field.id === 'field_001') {
+    return {
+      ...field,
+      suspectedPest: 'いもち病',
+      pestPressureNote: 'high',
+      managementNote: '葉身に病斑が見られ、病害拡大の疑いがあります。',
+    }
   }
+
+  if (field.id === 'field_002') {
+    return {
+      ...field,
+      suspectedPest: 'アブラムシ類',
+      pestPressureNote: 'high',
+      managementNote: '下葉の黄化に加え、アブラムシの寄生密度が上昇。吸汁害の拡大に注意。',
+    }
+  }
+
+  return field
 }
 
 function MapFitBounds({ geojson }) {
@@ -198,7 +217,8 @@ function AgriMap({ geojson, activeFieldId, onSelectField }) {
         data={geojson}
         style={(feature) => {
           const fieldId = feature?.properties?.field_id
-          const palette = fieldPalette[fieldId] ?? defaultPalette
+          const issueType = fieldIssueType[fieldId] ?? 'pest'
+          const palette = issuePalette[issueType] ?? defaultPalette
           const active = fieldId === activeFieldId
           return {
             color: palette.stroke,
@@ -229,7 +249,7 @@ function App() {
   const [chatMessages, setChatMessages] = useState(() => [
     createChatMessage(
       'assistant',
-      '圃場を選んで質問してください。',
+      '圃場を選んで質問してください。\n\nこの圃場で聞ける例:\n・この圃場の特徴は？\n・まず見るべき点は？\n・必要なら対応農薬の候補は？',
       { source: 'welcome' },
     ),
   ])
@@ -371,9 +391,9 @@ function App() {
           <section className="flex min-h-0 h-full flex-col gap-3">
             <header className="hidden shrink-0 rounded-[24px] border border-white/75 bg-white/65 px-4 py-3 shadow-[0_16px_44px_rgba(15,23,42,0.06)] backdrop-blur-sm 2xl:block sm:px-5 sm:py-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-emerald-700">QGIS / GeoJSON / Dify</p>
-              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-slate-950">実ポリゴンで見る農業GIS</h1>
+              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-slate-950">圃場理解を、地図から対話へ</h1>
               <p className="mt-2 max-w-4xl text-[0.9rem] leading-5 text-slate-700">
-                QGIS から書き出した圃場ポリゴンと属性をそのまま使っています。左で圃場を選び、右で Dify に質問します。
+                病害虫の兆候から対応の示唆まで、圃場ごとにその場で確認。
               </p>
             </header>
 
@@ -382,7 +402,7 @@ function App() {
               <div className="relative z-10 shrink-0 flex items-center justify-between gap-3 px-2 pt-2 sm:px-4 sm:pt-4">
                 <div className="min-w-0">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700">Map</p>
-                  <h2 className="mt-1 text-[0.9rem] font-semibold text-slate-950 sm:text-[1rem]">1.圃場を選ぶ</h2>
+                  <h2 className="mt-1 text-[0.9rem] font-semibold text-slate-950 sm:text-[1rem]">圃場を選ぶ</h2>
                   <p className="mt-1 text-[0.82rem] leading-[1.35] text-slate-700 sm:text-[0.88rem]">
                     圃場ポリゴンをクリックして、管理状況を右ペインで確認できます。
                   </p>
@@ -479,6 +499,9 @@ function App() {
                 <p className="text-[10px] uppercase tracking-[0.22em] text-slate-400">Chat</p>
                 <p className="text-[10px] text-slate-400">{difyEndpoint ? 'Dify接続中' : '未接続'}</p>
               </div>
+              <p className="mt-2 text-[10px] leading-[1.5] text-slate-400">
+                圃場の特徴・まず見る点・必要なら対応農薬の候補を質問できます。
+              </p>
               <div className="chat-scroll mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
                 {renderedChatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -516,7 +539,7 @@ function App() {
                       sendChatMessage(chatInput)
                     }}
                     rows={2}
-                    placeholder="入力例：この圃場で管理上まず見るべき点は？"
+                    placeholder="入力例：この圃場の特徴は？ / 必要なら対応農薬の候補は？"
                     className="min-h-[64px] flex-1 resize-none rounded-2xl border border-emerald-300/25 bg-slate-900 px-4 py-3 text-[0.82rem] leading-[1.35] text-white outline-none placeholder:text-slate-400 focus:border-emerald-300"
                     style={{ fontSize: '0.82rem', lineHeight: '1.35' }}
                   />
