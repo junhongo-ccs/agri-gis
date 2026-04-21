@@ -1,5 +1,9 @@
 # Screen Layout Recommendation
 
+For company notebook desktop behavior, treat this as mandatory baseline too:
+
+- [company-pc-layout-principles.md](./company-pc-layout-principles.md)
+
 ## Goal
 
 This document defines the recommended screen structure for the QGIS + Dify Tourism PoC.

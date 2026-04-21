@@ -127,6 +127,25 @@ function MapFitBounds({ geojson }) {
   return null
 }
 
+function BottomRightZoomControl() {
+  const map = useMap()
+
+  useEffect(() => {
+    // Safety cleanup: remove any pre-existing top-left zoom control.
+    if (map.zoomControl) {
+      map.removeControl(map.zoomControl)
+    }
+
+    const control = L.control.zoom({ position: 'bottomright' })
+    control.addTo(map)
+    return () => {
+      control.remove()
+    }
+  }, [map])
+
+  return null
+}
+
 function AgriMap({ geojson, activeFieldId, onSelectField }) {
   const geoJsonRef = useRef(null)
 
@@ -147,9 +166,10 @@ function AgriMap({ geojson, activeFieldId, onSelectField }) {
       center={[35.918, 140.536]}
       zoom={15}
       scrollWheelZoom={true}
-      zoomControl={true}
+      zoomControl={false}
       className="h-full w-full"
     >
+      <BottomRightZoomControl />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -322,53 +342,63 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#ecfdf5_0%,_#d1fae5_100%)] text-slate-900 lg:h-screen lg:overflow-hidden">
-      <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col px-4 py-4 lg:h-full lg:min-h-0 lg:px-6">
-        <header className="rounded-[28px] border border-white/70 bg-white/70 px-5 py-4 shadow-[0_16px_44px_rgba(15,23,42,0.06)] backdrop-blur-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-emerald-700">QGIS / GeoJSON / Dify</p>
-          <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-slate-950 lg:text-[2rem]">
-            実ポリゴンで見る農業GIS
-          </h1>
-          <p className="mt-2 max-w-4xl text-[0.95rem] leading-6 text-slate-700">
-            QGIS から書き出した圃場ポリゴンと属性をそのまま使っています。左で圃場を選び、右で Dify に質問します。
-          </p>
-        </header>
+    <div className="h-[100dvh] overflow-hidden bg-[linear-gradient(180deg,_#ecfdf5_0%,_#d1fae5_100%)] text-slate-900">
+      <div className="mx-auto flex h-full max-w-[1600px] flex-col overflow-hidden px-4 py-3 sm:px-5 lg:px-6 xl:px-8">
+        <main className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(340px,390px)] xl:grid-cols-[minmax(0,1fr)_minmax(360px,420px)]">
+          <section className="flex min-h-0 h-full flex-col gap-3">
+            <header className="hidden shrink-0 rounded-[24px] border border-white/75 bg-white/65 px-4 py-3 shadow-[0_16px_44px_rgba(15,23,42,0.06)] backdrop-blur-sm 2xl:block sm:px-5 sm:py-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-emerald-700">QGIS / GeoJSON / Dify</p>
+              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-slate-950">実ポリゴンで見る農業GIS</h1>
+              <p className="mt-2 max-w-4xl text-[0.9rem] leading-5 text-slate-700">
+                QGIS から書き出した圃場ポリゴンと属性をそのまま使っています。左で圃場を選び、右で Dify に質問します。
+              </p>
+            </header>
 
-        <main className="mt-4 grid min-h-0 flex-1 gap-4 lg:min-h-0 lg:grid-cols-[minmax(0,1.2fr)_minmax(340px,420px)]">
-          <section className="flex min-h-[50vh] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white/75 shadow-[0_24px_60px_rgba(15,23,42,0.08)] lg:min-h-0">
-            <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700">Map</p>
-                <h2 className="mt-1 text-[1rem] font-semibold text-slate-950">圃場ポリゴン</h2>
+            <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,_rgba(16,185,129,0.10),_transparent_30%),radial-gradient(circle_at_85%_15%,_rgba(132,204,22,0.10),_transparent_22%)]" />
+              <div className="relative z-10 shrink-0 flex items-center justify-between gap-3 px-2 pt-2 sm:px-4 sm:pt-4">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700">Map</p>
+                  <h2 className="mt-1 text-[0.9rem] font-semibold text-slate-950 sm:text-[1rem]">1.圃場を選ぶ</h2>
+                  <p className="mt-1 text-[0.82rem] leading-[1.35] text-slate-700 sm:text-[0.88rem]">
+                    圃場ポリゴンをクリックして、管理状況を右ペインで確認できます。
+                  </p>
+                </div>
+                <div className="hidden rounded-full border border-emerald-400/35 bg-emerald-50 px-2.5 py-1 text-[10px] font-medium text-emerald-700 sm:block">
+                  地図は動かせます
+                </div>
               </div>
-              <div className="text-right text-[0.76rem] text-slate-600">
-                <p>{selectedField?.name ?? '未選択'}</p>
-                <p>{selectedField ? getFieldSummary(selectedField) : '読み込み中'}</p>
+
+              <div className="relative z-10 mt-3 min-h-0 flex-1">
+                <div className="relative h-full overflow-hidden rounded-[24px] border border-white/60 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+                  {!loading && !error && geojson ? <AgriMap geojson={geojson} activeFieldId={activeFieldId} onSelectField={setActiveFieldId} /> : null}
+                  {loading ? (
+                    <div className="absolute inset-x-6 bottom-6 rounded-2xl border border-emerald-300/30 bg-slate-900/80 px-4 py-3 text-sm text-emerald-100">
+                      境界データを読み込み中...
+                    </div>
+                  ) : null}
+                  {error ? (
+                    <div className="absolute inset-x-6 bottom-6 rounded-2xl border border-rose-300/30 bg-rose-950/85 px-4 py-3 text-sm text-rose-100">
+                      {error}
+                    </div>
+                  ) : null}
+                </div>
               </div>
-            </div>
-            <div className="relative min-h-[420px] flex-1 lg:min-h-0">
-              {!loading && !error && geojson ? <AgriMap geojson={geojson} activeFieldId={activeFieldId} onSelectField={setActiveFieldId} /> : null}
-              {loading ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-slate-700">境界データを読み込み中...</div>
-              ) : null}
-              {error ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/70 px-6 text-sm text-rose-700">{error}</div>
-              ) : null}
             </div>
           </section>
 
-          <aside className="flex min-h-[50vh] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-slate-900/95 text-white shadow-[0_24px_60px_rgba(15,23,42,0.10)] lg:min-h-0">
-            <div className="shrink-0 border-b border-white/10 px-5 py-4">
+          <aside className="flex h-full min-h-0 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-slate-900/95 p-4 text-white shadow-[0_24px_60px_rgba(15,23,42,0.10)] sm:p-5">
+            <div className="shrink-0">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-300">Field</p>
-              <h2 className="mt-1 text-[1.2rem] font-semibold tracking-tight">{selectedField?.name ?? '圃場を選択してください'}</h2>
-              <p className="mt-1 text-[0.88rem] text-slate-300">{selectedField ? getFieldSummary(selectedField) : '地図から圃場を選択してください。'}</p>
+              <h2 className="mt-1 text-[1rem] font-semibold tracking-tight sm:text-[1.12rem]">{selectedField?.name ?? '圃場を選択してください'}</h2>
+              <p className="mt-1 text-[0.84rem] leading-[1.35] text-slate-300">{selectedField ? getFieldSummary(selectedField) : '地図から圃場を選択してください。'}</p>
               {selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし' ? (
-                <p className="mt-3 inline-flex rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1 text-[0.78rem] text-amber-100">
+                <p className="mt-3 inline-flex rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1 text-[0.76rem] text-amber-100">
                   {selectedField.suspectedPest} の発生報告あり。必要なら対応農薬を確認できます。
                 </p>
               ) : null}
               {selectedField ? (
-                <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-[0.82rem]">
+                <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[0.8rem]">
                   <span className="text-slate-400">圃場ID</span>
                   <span className="font-medium text-white">{selectedField.id}</span>
                   <span className="text-slate-400">圃場種別</span>
@@ -377,28 +407,28 @@ function App() {
                   <span className="font-medium text-white">{formatCropType(selectedField.cropType)}</span>
                   <span className="text-slate-400">農薬最終日</span>
                   <span className="font-medium text-white">{selectedField.lastPesticideDate || '—'}</span>
-                  <span className="text-slate-400">輪作状況</span>
-                  <span className="font-medium text-white">{formatRotationStatus(selectedField.rotationStatus)}</span>
-                  <span className="text-slate-400">病害虫状況</span>
-                  <span className="font-medium text-white">{formatPestPressure(selectedField.pestPressureNote)}</span>
-                  <span className="text-slate-400">害虫報告</span>
-                  <span className="font-medium text-white">{selectedField.suspectedPest || '—'}</span>
-                  <span className="text-slate-400">観察事項</span>
-                  <span className="font-medium text-white">{formatManagementNote(selectedField.managementNote)}</span>
+                  <span className="hidden text-slate-400 2xl:block">輪作状況</span>
+                  <span className="hidden font-medium text-white 2xl:block">{formatRotationStatus(selectedField.rotationStatus)}</span>
+                  <span className="hidden text-slate-400 2xl:block">病害虫状況</span>
+                  <span className="hidden font-medium text-white 2xl:block">{formatPestPressure(selectedField.pestPressureNote)}</span>
+                  <span className="hidden text-slate-400 2xl:block">害虫報告</span>
+                  <span className="hidden font-medium text-white 2xl:block">{selectedField.suspectedPest || '—'}</span>
+                  <span className="hidden text-slate-400 2xl:block">観察事項</span>
+                  <span className="hidden font-medium text-white 2xl:block">{formatManagementNote(selectedField.managementNote)}</span>
                 </div>
               ) : null}
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col">
-              <div className="shrink-0 flex items-center justify-between border-b border-white/10 px-5 py-3">
+            <div className="mt-3 flex min-h-0 flex-1 flex-col">
+              <div className="shrink-0 flex items-center justify-between border-b border-white/10 pb-2.5">
                 <p className="text-[10px] uppercase tracking-[0.22em] text-slate-400">Chat</p>
                 <p className="text-[10px] text-slate-400">{difyEndpoint ? 'Dify接続中' : '未接続'}</p>
               </div>
-              <div className="chat-scroll min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+              <div className="chat-scroll mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
                 {renderedChatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div
-                      className={`max-w-[88%] rounded-[22px] px-4 py-3 text-[0.9rem] leading-[1.55] ${
+                      className={`max-w-[88%] rounded-[22px] px-3.5 py-2.5 text-[0.86rem] leading-[1.4] ${
                         message.role === 'user' ? 'bg-emerald-500 text-slate-950' : 'border border-white/10 bg-white/8 text-slate-100'
                       }`}
                     >
@@ -414,7 +444,7 @@ function App() {
                 <div ref={chatEndRef} />
               </div>
               <form
-                className="shrink-0 border-t border-white/10 px-5 py-4"
+                className="mt-3 shrink-0 border-t border-white/10 pt-3"
                 onSubmit={(event) => {
                   event.preventDefault()
                   sendChatMessage(chatInput)
@@ -430,9 +460,9 @@ function App() {
                       event.preventDefault()
                       sendChatMessage(chatInput)
                     }}
-                    rows={3}
+                    rows={2}
                     placeholder="入力例：この圃場で管理上まず見るべき点は？"
-                    className="min-h-[76px] flex-1 resize-none rounded-2xl border border-emerald-300/25 bg-slate-900 px-4 py-3 text-[0.95rem] leading-[1.45] text-white outline-none placeholder:text-slate-400 focus:border-emerald-300"
+                    className="min-h-[64px] flex-1 resize-none rounded-2xl border border-emerald-300/25 bg-slate-900 px-4 py-3 text-[0.82rem] leading-[1.35] text-white outline-none placeholder:text-slate-400 focus:border-emerald-300"
                   />
                   <button
                     type="submit"

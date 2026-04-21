@@ -27,6 +27,7 @@ The core flow is:
 - [plan-input.txt](plan-input.txt)
 - [docs/overview/agri-handoff-memo.md](docs/overview/agri-handoff-memo.md)
 - [docs/design/poc-design.md](docs/design/poc-design.md)
+- [docs/design/company-pc-layout-principles.md](docs/design/company-pc-layout-principles.md)
 - [docs/qgis/qgis-task-list.md](docs/qgis/qgis-task-list.md)
 - [docs/dify/dify-design-plan.md](docs/dify/dify-design-plan.md)
 - [docs/dify/dify-schema-draft.md](docs/dify/dify-schema-draft.md)
