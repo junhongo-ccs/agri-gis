@@ -6,6 +6,36 @@ import {
   formatRotationStatus,
 } from './agriFormat'
 
+const pesticideCatalog = [
+  {
+    product_name: 'ブラシンフロアブル',
+    target_crop: '稲',
+    target_issue: 'いもち病',
+    target_issue_type: 'disease',
+    dosage_l_per_10a: 0.1,
+    dilution_ratio: '1000倍',
+    note: '病斑の拡大抑制を狙う基本候補',
+  },
+  {
+    product_name: 'オリゼメート粒剤',
+    target_crop: '稲',
+    target_issue: 'いもち病',
+    target_issue_type: 'disease',
+    dosage_l_per_10a: 3.0,
+    dilution_ratio: '粒剤',
+    note: '予防寄りの施用候補',
+  },
+  {
+    product_name: 'スタークル顆粒水溶剤',
+    target_crop: '野菜類',
+    target_issue: 'アブラムシ類',
+    target_issue_type: 'pest',
+    dosage_l_per_10a: 0.05,
+    dilution_ratio: '2000倍',
+    note: '吸汁害虫向け候補',
+  },
+]
+
 function normalizeTargetCrop(cropType) {
   const normalized = formatCropType(cropType)
   if (!normalized || normalized === '—') return ''
@@ -16,22 +46,45 @@ function normalizeTargetCrop(cropType) {
   return normalized
 }
 
-function normalizeTargetPest(suspectedPest) {
+function normalizeTargetIssue(suspectedPest) {
   const normalized = suspectedPest == null ? '' : String(suspectedPest).trim()
   if (!normalized || normalized === 'なし' || normalized === '—') return ''
+  if (normalized.includes('病')) return normalized
   if (normalized.endsWith('類')) return normalized
   return `${normalized}類`
 }
 
+function inferIssueType(targetIssue) {
+  if (!targetIssue) return ''
+  if (targetIssue.includes('病')) return 'disease'
+  return 'pest'
+}
+
+function findPesticideCandidates({ targetCrop, targetIssue, targetIssueType }) {
+  if (!targetCrop || !targetIssue) return []
+  return pesticideCatalog.filter(
+    (item) =>
+      item.target_crop === targetCrop &&
+      item.target_issue === targetIssue &&
+      item.target_issue_type === targetIssueType,
+  )
+}
+
 export function buildAgriContext({ field, question }) {
   const targetCrop = field ? normalizeTargetCrop(field.cropType) : ''
-  const targetPest = field ? normalizeTargetPest(field.suspectedPest) : ''
+  const targetIssue = field ? normalizeTargetIssue(field.suspectedPest) : ''
+  const targetIssueType = inferIssueType(targetIssue)
+  const pesticideCandidates = findPesticideCandidates({ targetCrop, targetIssue, targetIssueType })
 
   return {
     schema_version: 'agri.v1',
-    task_type: targetPest ? 'pest_recommendation' : 'field_summary',
+    task_type: targetIssue ? 'issue_recommendation' : 'field_summary',
     target_crop: targetCrop,
-    target_pest: targetPest,
+    target_issue_type: targetIssueType,
+    target_issue: targetIssue,
+    // Backward compatibility for existing Dify flow that reads target_pest.
+    target_pest: targetIssue,
+    pesticide_candidates: pesticideCandidates,
     generated_at: new Date().toISOString(),
     field: field
       ? {
@@ -60,11 +113,19 @@ export function createLocalAssistantReply({ question, field }) {
   }
 
   const prefix = question ? `「${question}」に対して、` : ''
-  const pestLine =
-    field.suspectedPest && field.suspectedPest !== 'なし'
-      ? `害虫報告は ${field.suspectedPest} です。`
-      : '現時点で特定の害虫報告はありません。'
-  return `${prefix}${field.name}（${field.areaHa ?? '—'} ha）は、作物：${formatCropType(field.cropType)}、土壌 pH ${field.soilPh ?? '—'} の圃場です。${pestLine} 病害虫状況：${formatPestPressure(field.pestPressureNote)}。Dify 接続後は、圃場コンテキストをもとに詳細な説明が返ります。`
+  const targetCrop = normalizeTargetCrop(field.cropType)
+  const targetIssue = normalizeTargetIssue(field.suspectedPest)
+  const targetIssueType = inferIssueType(targetIssue)
+  const pesticideCandidates = findPesticideCandidates({ targetCrop, targetIssue, targetIssueType })
+  const issueLine =
+    targetIssue
+      ? `報告されている病害虫は ${targetIssue} です。`
+      : '現時点で特定の病害虫報告はありません。'
+  const pesticideLine =
+    pesticideCandidates.length > 0
+      ? `候補農薬: ${pesticideCandidates.map((item) => `${item.product_name}（目安: ${item.dilution_ratio}）`).join(' / ')}。`
+      : 'この入力だけでは対応農薬候補を特定できません。'
+  return `${prefix}${field.name}（${field.areaHa ?? '—'} ha）は、作物：${formatCropType(field.cropType)}、土壌 pH ${field.soilPh ?? '—'} の圃場です。${issueLine} 病害虫状況：${formatPestPressure(field.pestPressureNote)}。${pesticideLine} 実散布前に最新ラベルと使用基準を確認してください。`
 }
 
 async function readResponseBody(response) {
@@ -108,8 +169,23 @@ export async function postChatMessage({ endpoint, userId, conversationId, questi
     throw new Error(message)
   }
 
+  const answerCandidates = [
+    data?.answer,
+    data?.data?.answer,
+    data?.outputs?.text,
+    data?.data?.outputs?.text,
+    data?.output_text,
+    data?.message,
+  ]
+  const answer = answerCandidates.find((value) => typeof value === 'string' && value.trim())?.trim() || ''
+
+  if (!answer) {
+    const taskId = data?.task_id ? ` (task_id: ${data.task_id})` : ''
+    throw new Error(`Dify から空の応答が返りました${taskId}`)
+  }
+
   return {
-    answer: data?.answer ?? data?.data?.answer ?? data?.message ?? '',
+    answer,
     conversationId: data?.conversation_id ?? data?.conversationId ?? conversationId ?? null,
     raw: data,
   }

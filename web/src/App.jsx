@@ -116,6 +116,16 @@ function getFieldSummary(field) {
   ].join(' / ')
 }
 
+function applyFieldScenario(field) {
+  if (!field || field.id !== 'field_001') return field
+  return {
+    ...field,
+    suspectedPest: 'いもち病',
+    pestPressureNote: 'high',
+    managementNote: '葉身に病斑が見られ、病害拡大の疑いがあります。',
+  }
+}
+
 function MapFitBounds({ geojson }) {
   const map = useMap()
 
@@ -259,7 +269,7 @@ function App() {
     return geojson.features
       .map((feature) => {
         const props = feature.properties ?? {}
-        return {
+        return applyFieldScenario({
           id: props.field_id,
           name: props.field_name,
           fieldType: props.field_type,
@@ -272,7 +282,7 @@ function App() {
           pestPressureNote: props.pest_pressure_note,
           suspectedPest: props.suspected_pest,
           center: getFeatureCenter(feature),
-        }
+        })
       })
       .sort((left, right) => left.id.localeCompare(right.id))
   }, [geojson])
@@ -394,7 +404,7 @@ function App() {
               <p className="mt-1 text-[0.84rem] leading-[1.35] text-slate-300">{selectedField ? getFieldSummary(selectedField) : '地図から圃場を選択してください。'}</p>
               {selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし' ? (
                 <p className="mt-3 inline-flex rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1 text-[0.76rem] text-amber-100">
-                  {selectedField.suspectedPest} の発生報告あり。必要なら対応農薬を確認できます。
+                  {selectedField.suspectedPest} の報告あり。必要なら対応農薬を確認できます。
                 </p>
               ) : null}
               {selectedField ? (
