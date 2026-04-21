@@ -439,8 +439,7 @@ function App() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,_rgba(16,185,129,0.10),_transparent_30%),radial-gradient(circle_at_85%_15%,_rgba(132,204,22,0.10),_transparent_22%)]" />
               <div className="relative z-10 shrink-0 flex items-center justify-between gap-3 px-2 pt-2 sm:px-4 sm:pt-4">
                 <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700">Map</p>
-                  <h2 className="mt-1 text-[0.9rem] font-semibold text-slate-950 sm:text-[1rem]">圃場を選ぶ</h2>
+                  <h2 className="text-[0.9rem] font-semibold text-slate-950 sm:text-[1rem]">圃場を選ぶ</h2>
                   <p className="mt-1 text-[0.82rem] leading-[1.35] text-slate-700 sm:text-[0.88rem]">
                     圃場ポリゴンをクリックして、管理状況を右ペインで確認できます。
                   </p>
