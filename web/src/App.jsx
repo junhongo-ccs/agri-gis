@@ -423,10 +423,14 @@ function App() {
       <div className="mx-auto flex h-full max-w-[1600px] flex-col overflow-hidden px-4 py-3 sm:px-5 lg:px-6 xl:px-8">
         <main className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(340px,390px)] xl:grid-cols-[minmax(0,1fr)_minmax(360px,420px)]">
           <section className="flex min-h-0 h-full flex-col gap-3">
-            <header className="hidden shrink-0 rounded-[24px] border border-white/75 bg-white/65 px-4 py-3 shadow-[0_16px_44px_rgba(15,23,42,0.06)] backdrop-blur-sm 2xl:block sm:px-5 sm:py-4">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-emerald-700">QGIS / GeoJSON / Dify</p>
-              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-slate-950">圃場理解を、地図から対話へ</h1>
-              <p className="mt-2 max-w-4xl text-[0.9rem] leading-5 text-slate-700">
+            <header className="hidden shrink-0 rounded-[28px] border border-white/18 bg-slate-900/88 px-4 py-3 text-white shadow-[0_20px_64px_rgba(15,23,42,0.07)] backdrop-blur 2xl:block sm:px-5 sm:py-4">
+              <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium tracking-[0.16em] text-slate-200">
+                <span className="rounded-full border border-white/14 bg-white/10 px-2 py-0.5">QGIS</span>
+                <span className="rounded-full border border-white/14 bg-white/10 px-2 py-0.5">GeoJSON</span>
+                <span className="rounded-full border border-cyan-200/40 bg-cyan-300/18 px-2 py-0.5 text-cyan-50">Dify</span>
+              </div>
+              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-white">圃場理解を、地図から対話へ</h1>
+              <p className="mt-2 max-w-4xl text-[0.9rem] leading-5 text-slate-200">
                 病害虫の兆候から対応の示唆まで、圃場ごとにその場で確認。
               </p>
             </header>
