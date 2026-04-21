@@ -466,7 +466,7 @@ function App() {
 
           <aside className="flex h-full min-h-0 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-slate-900/95 p-4 text-white shadow-[0_24px_60px_rgba(15,23,42,0.10)] sm:p-5">
             <div className="shrink-0">
-              <h2 className="mt-1 text-[1rem] font-semibold tracking-tight sm:text-[1.12rem]">{selectedField?.name ?? '圃場を選択してください'}</h2>
+              <h2 className="mt-1 text-[1rem] font-semibold tracking-tight sm:text-[1.25rem]">{selectedField?.name ?? '圃場を選択してください'}</h2>
               <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.84rem] leading-[1.35] text-slate-300">
                 {selectedField ? (
                   <>
