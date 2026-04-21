@@ -116,6 +116,14 @@ function getFieldSummary(field) {
   ].join(' / ')
 }
 
+function getFieldStatus(field) {
+  if (!field) return '状態未設定'
+  if (field.suspectedPest && field.suspectedPest !== 'なし') {
+    return `${field.suspectedPest} に注意`
+  }
+  return formatPestPressure(field.pestPressureNote)
+}
+
 function applyFieldScenario(field) {
   if (!field || field.id !== 'field_001') return field
   return {
@@ -221,7 +229,7 @@ function App() {
   const [chatMessages, setChatMessages] = useState(() => [
     createChatMessage(
       'assistant',
-      'QGIS で描いた実ポリゴンを使っています。圃場を選んで質問してください。',
+      '圃場を選んで質問してください。',
       { source: 'welcome' },
     ),
   ])
@@ -231,6 +239,7 @@ function App() {
   const [isSending, setIsSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isFieldDetailsOpen, setIsFieldDetailsOpen] = useState(false)
   const chatEndRef = useRef(null)
 
   const difyEndpoint =
@@ -291,6 +300,10 @@ function App() {
     () => fields.find((field) => field.id === activeFieldId) ?? fields[0] ?? null,
     [activeFieldId, fields],
   )
+
+  useEffect(() => {
+    setIsFieldDetailsOpen(false)
+  }, [selectedField?.id])
 
   const renderedChatMessages = useMemo(
     () => chatMessages.flatMap((message) => splitMessageContent(message)),
@@ -399,32 +412,64 @@ function App() {
 
           <aside className="flex h-full min-h-0 flex-col overflow-hidden rounded-[28px] border border-white/70 bg-slate-900/95 p-4 text-white shadow-[0_24px_60px_rgba(15,23,42,0.10)] sm:p-5">
             <div className="shrink-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-300">Field</p>
               <h2 className="mt-1 text-[1rem] font-semibold tracking-tight sm:text-[1.12rem]">{selectedField?.name ?? '圃場を選択してください'}</h2>
-              <p className="mt-1 text-[0.84rem] leading-[1.35] text-slate-300">{selectedField ? getFieldSummary(selectedField) : '地図から圃場を選択してください。'}</p>
-              {selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし' ? (
-                <p className="mt-3 inline-flex rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1 text-[0.76rem] text-amber-100">
-                  {selectedField.suspectedPest} の報告あり。必要なら対応農薬を確認できます。
-                </p>
-              ) : null}
+              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.84rem] leading-[1.35] text-slate-300">
+                {selectedField ? (
+                  <>
+                    <span>{getFieldSummary(selectedField)}</span>
+                    <span className="hidden h-1 w-1 rounded-full bg-slate-500 sm:inline-block" />
+                    <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-2.5 py-0.5 text-[0.76rem] text-emerald-100">
+                      {getFieldStatus(selectedField)}
+                    </span>
+                  </>
+                ) : (
+                  <span>地図から圃場を選択してください。</span>
+                )}
+              </div>
               {selectedField ? (
-                <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[0.8rem]">
-                  <span className="text-slate-400">圃場ID</span>
-                  <span className="font-medium text-white">{selectedField.id}</span>
-                  <span className="text-slate-400">圃場種別</span>
-                  <span className="font-medium text-white">{formatFieldType(selectedField.fieldType)}</span>
-                  <span className="text-slate-400">作物</span>
-                  <span className="font-medium text-white">{formatCropType(selectedField.cropType)}</span>
-                  <span className="text-slate-400">農薬最終日</span>
-                  <span className="font-medium text-white">{selectedField.lastPesticideDate || '—'}</span>
-                  <span className="hidden text-slate-400 2xl:block">輪作状況</span>
-                  <span className="hidden font-medium text-white 2xl:block">{formatRotationStatus(selectedField.rotationStatus)}</span>
-                  <span className="hidden text-slate-400 2xl:block">病害虫状況</span>
-                  <span className="hidden font-medium text-white 2xl:block">{formatPestPressure(selectedField.pestPressureNote)}</span>
-                  <span className="hidden text-slate-400 2xl:block">害虫報告</span>
-                  <span className="hidden font-medium text-white 2xl:block">{selectedField.suspectedPest || '—'}</span>
-                  <span className="hidden text-slate-400 2xl:block">観察事項</span>
-                  <span className="hidden font-medium text-white 2xl:block">{formatManagementNote(selectedField.managementNote)}</span>
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-[0.8rem] text-slate-100 transition-colors hover:border-emerald-300/35 hover:bg-emerald-400/10"
+                    aria-expanded={isFieldDetailsOpen}
+                    aria-controls="field-details-panel"
+                    onClick={() => setIsFieldDetailsOpen((current) => !current)}
+                  >
+                    <span>{isFieldDetailsOpen ? '詳細を閉じる' : '詳細を開く'}</span>
+                    <span className={`text-[0.7rem] transition-transform ${isFieldDetailsOpen ? 'rotate-180' : ''}`}>⌄</span>
+                  </button>
+
+                  <div
+                    id="field-details-panel"
+                    className={`grid overflow-hidden transition-[grid-template-rows,opacity,margin-top] duration-200 ease-out ${isFieldDetailsOpen ? 'mt-3 grid-rows-[1fr] opacity-100' : 'mt-0 grid-rows-[0fr] opacity-0'}`}
+                    aria-hidden={!isFieldDetailsOpen}
+                  >
+                    <div className="min-h-0 overflow-hidden">
+                      {selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし' ? (
+                        <p className="mb-3 inline-flex rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1 text-[0.76rem] text-amber-100">
+                          {selectedField.suspectedPest} の報告あり。必要なら対応農薬を確認できます。
+                        </p>
+                      ) : null}
+                      <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[0.8rem]">
+                        <span className="text-slate-400">圃場ID</span>
+                        <span className="font-medium text-white">{selectedField.id}</span>
+                        <span className="text-slate-400">圃場種別</span>
+                        <span className="font-medium text-white">{formatFieldType(selectedField.fieldType)}</span>
+                        <span className="text-slate-400">作物</span>
+                        <span className="font-medium text-white">{formatCropType(selectedField.cropType)}</span>
+                        <span className="text-slate-400">農薬最終日</span>
+                        <span className="font-medium text-white">{selectedField.lastPesticideDate || '—'}</span>
+                        <span className="hidden text-slate-400 2xl:block">輪作状況</span>
+                        <span className="hidden font-medium text-white 2xl:block">{formatRotationStatus(selectedField.rotationStatus)}</span>
+                        <span className="hidden text-slate-400 2xl:block">病害虫状況</span>
+                        <span className="hidden font-medium text-white 2xl:block">{formatPestPressure(selectedField.pestPressureNote)}</span>
+                        <span className="hidden text-slate-400 2xl:block">害虫報告</span>
+                        <span className="hidden font-medium text-white 2xl:block">{selectedField.suspectedPest || '—'}</span>
+                        <span className="hidden text-slate-400 2xl:block">観察事項</span>
+                        <span className="hidden font-medium text-white 2xl:block">{formatManagementNote(selectedField.managementNote)}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : null}
             </div>
@@ -473,6 +518,7 @@ function App() {
                     rows={2}
                     placeholder="入力例：この圃場で管理上まず見るべき点は？"
                     className="min-h-[64px] flex-1 resize-none rounded-2xl border border-emerald-300/25 bg-slate-900 px-4 py-3 text-[0.82rem] leading-[1.35] text-white outline-none placeholder:text-slate-400 focus:border-emerald-300"
+                    style={{ fontSize: '0.82rem', lineHeight: '1.35' }}
                   />
                   <button
                     type="submit"

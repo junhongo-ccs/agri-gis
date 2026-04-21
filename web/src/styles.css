@@ -63,5 +63,5 @@ button,
 input,
 textarea,
 select {
-  font: inherit;
+  font-family: inherit;
 }

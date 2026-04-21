@@ -112,20 +112,23 @@ export function createLocalAssistantReply({ question, field }) {
     return '圃場データを読み込み中です。しばらく待ってからもう一度試してください。'
   }
 
-  const prefix = question ? `「${question}」に対して、` : ''
   const targetCrop = normalizeTargetCrop(field.cropType)
   const targetIssue = normalizeTargetIssue(field.suspectedPest)
   const targetIssueType = inferIssueType(targetIssue)
   const pesticideCandidates = findPesticideCandidates({ targetCrop, targetIssue, targetIssueType })
-  const issueLine =
+  const summaryParagraph = `${field.name} を選択中です。面積は ${field.areaHa ?? '—'} ha、作物は ${formatCropType(field.cropType)}、土壌 pH は ${field.soilPh ?? '—'} です。前回の薬剤散布日は ${field.lastPesticideDate || '—'}、病害虫状況は ${formatPestPressure(field.pestPressureNote)} です。`
+  const interpretationParagraph = question
+    ? `ご質問「${question}」については、与えられた情報の範囲では、この圃場は ${field.name} の基本状態を確認する段階です。`
+    : `この圃場は、基本状態の確認から入るのがよさそうです。`
+  const issueParagraph =
     targetIssue
       ? `報告されている病害虫は ${targetIssue} です。`
       : '現時点で特定の病害虫報告はありません。'
-  const pesticideLine =
+  const pesticideParagraph =
     pesticideCandidates.length > 0
-      ? `候補農薬: ${pesticideCandidates.map((item) => `${item.product_name}（目安: ${item.dilution_ratio}）`).join(' / ')}。`
-      : 'この入力だけでは対応農薬候補を特定できません。'
-  return `${prefix}${field.name}（${field.areaHa ?? '—'} ha）は、作物：${formatCropType(field.cropType)}、土壌 pH ${field.soilPh ?? '—'} の圃場です。${issueLine} 病害虫状況：${formatPestPressure(field.pestPressureNote)}。${pesticideLine} 実散布前に最新ラベルと使用基準を確認してください。`
+      ? `候補農薬は ${pesticideCandidates.map((item) => `${item.product_name}（目安: ${item.dilution_ratio}）`).join(' / ')} です。実散布前に最新ラベルと使用基準を確認してください。`
+      : 'この入力だけでは対応農薬候補を特定できません。実散布前に最新ラベルと使用基準を確認してください。'
+  return [summaryParagraph, interpretationParagraph, issueParagraph, pesticideParagraph].join('\n\n')
 }
 
 async function readResponseBody(response) {
