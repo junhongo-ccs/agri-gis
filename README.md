@@ -2,12 +2,13 @@
 
 Agri-GIS Intelligence is a proof of concept for field-level pest and disease support that combines QGIS, a web map UI, and Dify-based grounded responses.
 
-The core flow is:
+## Current User Flow
 
 1. QGIS prepares field polygons and exports field attributes.
 2. The web app loads the selected field into `agri_context`.
-3. The user uploads a crop symptom image and optionally chooses a pesticide label.
-4. Dify explains the field context and a code step calculates spray quantity deterministically.
+3. Dify answers field-summary questions from the selected field context.
+4. When the user consents (e.g. `はい`, `お願い`, `教えて`), Dify returns pesticide candidates and required quantity.
+5. The web chat shows one pesticide image (top matched candidate) in-line for PoC demonstration.
 
 ## What This Repo Contains
 
@@ -21,6 +22,49 @@ The core flow is:
 - `data/rag/` - Dify Knowledge に投入するRAGシードCSV
 - `docs/ops/` - deployment notes
 - `docs/legacy/` - older PC-view planning docs kept for reference
+
+## Local Development
+
+### Start
+
+```bash
+cd web
+npm i
+npm run dev
+```
+
+- Web UI: `http://127.0.0.1:5173`
+- Dify proxy (if used): `http://127.0.0.1:8787`
+
+### Environment
+
+- `web/.env.local`
+  - `VITE_DIFY_CHAT_ENDPOINT`
+  - `VITE_DIFY_USER_ID`
+- `web/.env.proxy`
+  - `DIFY_API_BASE_URL`
+  - `DIFY_API_KEY`
+
+## Pesticide Image Mapping (PoC)
+
+- Image directory: `web/public/pesticides/`
+- Current mapped assets:
+  - `orizemate-granule.png`
+  - `bracin-flowable.png`
+  - `affirm-emulsion.png`
+  - `prevathon-flowable5.png`
+  - `starkle-wdg.png`
+  - `starkle-granule.png`
+
+The UI intentionally displays one image for the first matched candidate while text can list multiple candidates.
+
+## Favicon / OGP
+
+- `web/public/favicon.svg`
+- `web/public/favicon.png`
+- `web/public/og-image.png`
+
+Meta tags are configured in `web/index.html`.
 
 ## Current Working Docs
 
@@ -55,8 +99,8 @@ These files represent the current Agri working set:
 
 ## Current Focus
 
-The QGIS field data is already in place. The next work is to wire the web app to build `agri_context` from the summary CSV, then align the Dify workflow and response rendering.
+The QGIS field data and Dify flow are connected. Current focus is improving demonstration quality: stable classification, better response readability, and deterministic grounding for pesticide suggestions.
 
 ## Status
 
-The repository is being refactored into the Agri-GIS PoC. Some files are still in transition and are being replaced in place.
+The repository is actively evolving as a PoC. Prompts and workflow settings are iterated in place with matching docs under `docs/dify/`.
