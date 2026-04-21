@@ -302,7 +302,7 @@ function App() {
 
   useEffect(() => {
     let active = true
-    document.title = 'QGIS × Dify | 農業GIS PoC'
+    document.title = '圃場×農薬インサイト|GIS+Dify'
 
     async function loadBoundary() {
       try {
@@ -429,7 +429,7 @@ function App() {
                 <span className="rounded-full border border-white/14 bg-white/10 px-2 py-0.5">GeoJSON</span>
                 <span className="rounded-full border border-cyan-200/40 bg-cyan-300/18 px-2 py-0.5 text-cyan-50">Dify</span>
               </div>
-              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-white">圃場理解を、地図から対話へ</h1>
+              <h1 className="mt-1 text-[1.5rem] font-semibold tracking-tight text-white">圃場×農薬インサイト|GIS+Dify</h1>
               <p className="mt-2 max-w-4xl text-[0.9rem] leading-5 text-slate-200">
                 病害虫の兆候から対応の示唆まで、圃場ごとにその場で確認。
               </p>
