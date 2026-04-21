@@ -26,6 +26,40 @@ const fieldIssueType = {
 
 const defaultPalette = issuePalette.pest
 
+const pesticideImageCatalog = [
+  { name: 'オリゼメート粒剤', aliases: ['オリゼメート粒剤'], src: '/pesticides/orizemate-granule.png' },
+  { name: 'ブラシンフロアブル', aliases: ['ブラシンフロアブル'], src: '/pesticides/bracin-flowable.png' },
+  { name: 'アファーム乳剤', aliases: ['アファーム乳剤'], src: '/pesticides/affirm-emulsion.png' },
+  {
+    name: 'プレバソンフロアブル5',
+    aliases: ['プレバソンフロアブル5', 'プレバソンフロアブル５'],
+    src: '/pesticides/prevathon-flowable5.png',
+  },
+  {
+    name: 'スタークル顆粒水溶剤',
+    aliases: ['スタークル顆粒水溶剤', 'スタークル顆粒水溶', 'スタークル顆粒'],
+    src: '/pesticides/starkle-wdg.png',
+  },
+  { name: 'スタークル粒剤', aliases: ['スタークル粒剤'], src: '/pesticides/starkle-granule.png' },
+]
+
+function normalizePesticideText(value) {
+  return String(value ?? '')
+    .normalize('NFKC')
+    .replace(/\s+/g, '')
+    .replace(/[「」『』（）()【】［］\[\]・,，.。:：]/g, '')
+}
+
+function findPesticideImage(messageContent) {
+  if (!messageContent) return null
+  const normalized = normalizePesticideText(messageContent)
+  return (
+    pesticideImageCatalog.find((item) =>
+      (item.aliases ?? [item.name]).some((alias) => normalized.includes(normalizePesticideText(alias))),
+    ) ?? null
+  )
+}
+
 function createMessageId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
@@ -505,12 +539,29 @@ function App() {
               <div className="chat-scroll mt-3 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
                 {renderedChatMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div
-                      className={`max-w-[88%] rounded-[22px] px-3.5 py-2.5 text-[0.86rem] leading-[1.4] ${
-                        message.role === 'user' ? 'bg-emerald-500 text-slate-950' : 'border border-white/10 bg-white/8 text-slate-100'
-                      }`}
-                    >
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    <div className="max-w-[88%] space-y-2">
+                      <div
+                        className={`rounded-[22px] px-3.5 py-2.5 text-[0.86rem] leading-[1.4] ${
+                          message.role === 'user' ? 'bg-emerald-500 text-slate-950' : 'border border-white/10 bg-white/8 text-slate-100'
+                        }`}
+                      >
+                        <p className="whitespace-pre-wrap">{message.content}</p>
+                      </div>
+                      {message.role === 'assistant' && (() => {
+                        const pesticide = findPesticideImage(message.content)
+                        if (!pesticide) return null
+                        return (
+                          <figure className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
+                            <img
+                              src={pesticide.src}
+                              alt={`${pesticide.name} の参考画像`}
+                              className="h-[140px] w-[220px] object-cover"
+                              loading="lazy"
+                            />
+                            <figcaption className="px-2.5 py-2 text-[0.72rem] text-slate-300">{pesticide.name}</figcaption>
+                          </figure>
+                        )
+                      })()}
                     </div>
                   </div>
                 ))}
