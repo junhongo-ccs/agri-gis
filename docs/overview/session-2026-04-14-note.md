@@ -12,7 +12,7 @@ To make the next QGIS session easier to resume, the repository now includes:
   - `docs/dify/dify-schema-draft.md`
 - a Dify right-rail contract and prompt draft:
   - `docs/dify/dify-right-rail.md`
-  - `docs/dify/dify-prompt-draft.md`
+  - `docs/dify/agri-gis-dify-prompt-draft.md`
 - a setup checklist for the actual Dify app:
   - `docs/dify/dify-setup-checklist.md`
 

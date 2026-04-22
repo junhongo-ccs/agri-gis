@@ -134,3 +134,31 @@ After the Dify app is created:
 3. place it only in the proxy or server environment
 4. confirm the right rail answers with the live Dify response
 5. confirm the calculation step returns the same numeric result for the same input every time
+
+## Future GIS Questions
+
+The current PoC already centers the selected field and its agronomic context. A natural next step is to accept GIS-style questions that are grounded in spatial relationships rather than only field attributes.
+
+Potential follow-up capabilities:
+
+- nearby field queries
+  - example: "この圃場の周辺で病害虫圧が高い圃場は？"
+  - example: "川に近い圃場を優先して見せて"
+- adjacency and influence queries
+  - example: "隣の圃場に病害虫が出ているなら注意したい"
+  - example: "この圃場の上流側にある圃場はどれ？"
+- comparison mode
+  - example: "与田浦北と与田浦東、どちらを先に見に行くべき？"
+  - compare area, soil pH, pest pressure, last spray date, and rotation status
+- spatial filters and highlighting
+  - example: "川沿いの圃場だけ表示して"
+  - example: "土壌 pH 6.0 未満をハイライトして"
+- buffer-based risk areas
+  - example: "病害虫圃場の周辺 200m を注意区域にする"
+
+Implementation idea:
+
+- keep deterministic GIS logic in the frontend or a lightweight backend helper
+- use Dify only for interpretation and narration, not for geometry math
+- add a dedicated intent route for spatial questions, separate from field summary and pesticide recommendation
+- prefer direct map feedback when the answer can be derived from geometry, distance, or adjacency alone

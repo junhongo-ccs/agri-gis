@@ -2,9 +2,9 @@
 
 Canonical is now split by node:
 
-- [dify-prompt-llm1-canonical.md](./dify-prompt-llm1-canonical.md)
-- [dify-prompt-llm2-canonical.md](./dify-prompt-llm2-canonical.md)
-- [dify-prompt-llm3-canonical.md](./dify-prompt-llm3-canonical.md)
+- [agri-gis-dify-prompt-llm1-canonical.md](./agri-gis-dify-prompt-llm1-canonical.md)
+- [agri-gis-dify-prompt-llm2-canonical.md](./agri-gis-dify-prompt-llm2-canonical.md)
+- [agri-gis-dify-prompt-llm3-canonical.md](./agri-gis-dify-prompt-llm3-canonical.md)
 
 ## Goal
 

@@ -36,7 +36,7 @@ Updated files:
 - [specify-input.txt](C:/github/agri-gis/specify-input.txt)
 - [plan-input.txt](C:/github/agri-gis/plan-input.txt)
 - [docs/design/poc-design.md](C:/github/agri-gis/docs/design/poc-design.md)
-- [docs/dify/dify-design-plan.md](C:/github/agri-gis/docs/dify/dify-design-plan.md)
+- [docs/dify/agri-gis-dify-design-plan.md](C:/github/agri-gis/docs/dify/agri-gis-dify-design-plan.md)
 - [docs/dify/dify-schema-draft.md](C:/github/agri-gis/docs/dify/dify-schema-draft.md)
 - [README.md](C:/github/agri-gis/README.md)
 
@@ -45,8 +45,8 @@ Updated files:
 - [docs/qgis/qgis-step-by-step.md](C:/github/agri-gis/docs/qgis/qgis-step-by-step.md)
 - [docs/design/area-boundary-proposals.md](C:/github/agri-gis/docs/design/area-boundary-proposals.md)
 - [docs/design/osm-category-mapping.md](C:/github/agri-gis/docs/design/osm-category-mapping.md)
-- [docs/dify/dify-prompt-canonical.md](C:/github/agri-gis/docs/dify/dify-prompt-canonical.md)
-- [docs/dify/dify-prompt-draft.md](C:/github/agri-gis/docs/dify/dify-prompt-draft.md)
+- [docs/dify/agri-gis-dify-prompt-canonical.md](C:/github/agri-gis/docs/dify/agri-gis-dify-prompt-canonical.md)
+- [docs/dify/agri-gis-dify-prompt-draft.md](C:/github/agri-gis/docs/dify/agri-gis-dify-prompt-draft.md)
 - [docs/design/region-scope.md](C:/github/agri-gis/docs/design/region-scope.md)
 - [docs/ops/railway-deploy.md](C:/github/agri-gis/docs/ops/railway-deploy.md)
 - [docs/overview/session-2026-04-14-note.md](C:/github/agri-gis/docs/overview/session-2026-04-14-note.md)
@@ -87,7 +87,7 @@ The current Agri working set is now centered on these artifacts:
 - [data/exports/agri_fields_summary.csv](C:/github/agri-gis/data/exports/agri_fields_summary.csv)
 - [web/dist/exports/agri_fields_summary.csv](C:/github/agri-gis/web/dist/exports/agri_fields_summary.csv)
 - [docs/dify/dify-schema-draft.md](C:/github/agri-gis/docs/dify/dify-schema-draft.md)
-- [docs/dify/dify-prompt-canonical.md](C:/github/agri-gis/docs/dify/dify-prompt-canonical.md)
+- [docs/dify/agri-gis-dify-prompt-canonical.md](C:/github/agri-gis/docs/dify/agri-gis-dify-prompt-canonical.md)
 
 ## Core Project Spec
 

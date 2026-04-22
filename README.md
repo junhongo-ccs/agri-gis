@@ -7,8 +7,9 @@ Agri-GIS Intelligence is a proof of concept for field-level pest and disease sup
 1. QGIS prepares field polygons and exports field attributes.
 2. The web app loads the selected field into `agri_context`.
 3. Dify answers field-summary questions from the selected field context.
-4. When the user consents (e.g. `はい`, `お願い`, `教えて`), Dify returns pesticide candidates and required quantity.
-5. The web chat shows one pesticide image (top matched candidate) in-line for PoC demonstration.
+4. When the user continues the conversation, the right rail can return pesticide candidates and required quantity from the selected field context.
+5. The web app keeps obvious off-topic chat local so the user does not wait on Dify for unrelated messages.
+6. The chat shows one pesticide image inline for the first matched candidate in PoC mode.
 
 ## What This Repo Contains
 
@@ -74,7 +75,11 @@ Meta tags are configured in `web/index.html`.
 - [docs/design/poc-design.md](docs/design/poc-design.md)
 - [docs/design/company-pc-layout-principles.md](docs/design/company-pc-layout-principles.md)
 - [docs/qgis/qgis-task-list.md](docs/qgis/qgis-task-list.md)
-- [docs/dify/dify-design-plan.md](docs/dify/dify-design-plan.md)
+- [docs/dify/agri-gis-dify-design-plan.md](docs/dify/agri-gis-dify-design-plan.md)
+- [docs/dify/agri-gis-dify-prompt-canonical.md](docs/dify/agri-gis-dify-prompt-canonical.md)
+- [docs/dify/agri-gis-dify-prompt-llm1-canonical.md](docs/dify/agri-gis-dify-prompt-llm1-canonical.md)
+- [docs/dify/agri-gis-dify-prompt-llm2-canonical.md](docs/dify/agri-gis-dify-prompt-llm2-canonical.md)
+- [docs/dify/agri-gis-dify-prompt-llm3-canonical.md](docs/dify/agri-gis-dify-prompt-llm3-canonical.md)
 - [docs/dify/dify-schema-draft.md](docs/dify/dify-schema-draft.md)
 
 ## Current Working Outputs
@@ -99,7 +104,7 @@ These files represent the current Agri working set:
 
 ## Current Focus
 
-The QGIS field data and Dify flow are connected. Current focus is improving demonstration quality: stable classification, better response readability, and deterministic grounding for pesticide suggestions.
+The QGIS field data and Dify flow are connected. Current focus is improving demonstration quality: stable classification, better response readability, deterministic grounding for pesticide suggestions, and a future path for GIS-style questions such as nearby fields, adjacency, and comparison mode.
 
 ## Status
 

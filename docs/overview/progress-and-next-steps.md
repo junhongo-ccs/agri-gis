@@ -2,7 +2,7 @@
 
 ## Latest session
 
-- [Session Handoff - 2026-04-21](/Users/hongoujun/Documents/GitHub/agri-gis/docs/overview/session-2026-04-21-handoff.md)
+- [Session Handoff - 2026-04-21](./session-2026-04-21-handoff.md)
 
 ## Active status
 
@@ -12,3 +12,5 @@ The Agri-GIS refactor is active. Use the session handoff document above as the c
 - task list
 - completed fixes
 - restart procedure after `git pull`
+- current Dify prompt canonicals in `docs/dify/agri-gis-dify-prompt-*.md`
+- GIS-question expansion ideas such as nearby fields, adjacency, and comparison mode
