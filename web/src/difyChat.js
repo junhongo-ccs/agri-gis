@@ -34,6 +34,51 @@ const pesticideCatalog = [
     dilution_ratio: '2000倍',
     note: '吸汁害虫向け候補',
   },
+  {
+    product_name: 'アファーム乳剤',
+    target_crop: '野菜類',
+    target_issue: 'ハモグリバエ類',
+    target_issue_type: 'pest',
+    dosage_l_per_10a: 0.05,
+    dilution_ratio: '2000倍',
+    note: '潜葉害虫向け候補',
+  },
+  {
+    product_name: 'プレバソンフロアブル5',
+    target_crop: '野菜類',
+    target_issue: 'ヨトウムシ類',
+    target_issue_type: 'pest',
+    dosage_l_per_10a: 0.02,
+    dilution_ratio: '4000倍',
+    note: 'チョウ目幼虫向け候補',
+  },
+  {
+    product_name: 'スタークル粒剤',
+    target_crop: '稲',
+    target_issue: 'イネミズゾウムシ類',
+    target_issue_type: 'pest',
+    dosage_l_per_10a: 3.0,
+    dilution_ratio: '粒剤',
+    note: '田植え後の害虫向け候補',
+  },
+  {
+    product_name: 'リドミルゴールドMZ',
+    target_crop: '野菜類',
+    target_issue: 'べと病',
+    target_issue_type: 'disease',
+    dosage_l_per_10a: 0.25,
+    dilution_ratio: '1000倍',
+    note: 'べと病向け候補',
+  },
+  {
+    product_name: 'トリフミン水和剤',
+    target_crop: '野菜類',
+    target_issue: 'うどんこ病',
+    target_issue_type: 'disease',
+    dosage_l_per_10a: 0.033,
+    dilution_ratio: '3000倍',
+    note: 'うどんこ病向け候補',
+  },
 ]
 
 function normalizeTargetCrop(cropType) {
@@ -68,6 +113,53 @@ function findPesticideCandidates({ targetCrop, targetIssue, targetIssueType }) {
       item.target_issue === targetIssue &&
       item.target_issue_type === targetIssueType,
   )
+}
+
+function formatAmount(value) {
+  if (!Number.isFinite(value)) return ''
+  const rounded = Math.round(value * 100) / 100
+  return Number.isInteger(rounded) ? String(rounded) : String(rounded).replace(/0+$/, '').replace(/\.$/, '')
+}
+
+function getDosageUnit(candidate) {
+  const ratio = String(candidate?.dilution_ratio ?? '')
+  if (ratio.includes('粒')) return 'kg'
+  return 'L'
+}
+
+function createCandidateSentence(candidate, fieldAreaHa) {
+  const dosage = Number(candidate?.dosage_l_per_10a)
+  const dosageText = Number.isFinite(dosage) ? `${candidate.dilution_ratio}、10aあたり${formatAmount(dosage)}${getDosageUnit(candidate)}` : `${candidate.dilution_ratio}`
+  const amountText = Number.isFinite(dosage) && Number.isFinite(fieldAreaHa)
+    ? `、必要量${formatAmount(dosage * fieldAreaHa * 10)}${getDosageUnit(candidate)}`
+    : ''
+  const noteText = candidate?.note ? `（${candidate.note}）` : ''
+
+  return `・${candidate.product_name}：${dosageText}${amountText}${noteText}`
+}
+
+export function createLocalIssueRecommendationReply({ field }) {
+  if (!field) {
+    return '圃場データを読み込み中です。しばらく待ってからもう一度試してください。'
+  }
+
+  const targetCrop = normalizeTargetCrop(field.cropType)
+  const targetIssue = normalizeTargetIssue(field.suspectedPest)
+  const targetIssueType = inferIssueType(targetIssue)
+  const pesticideCandidates = findPesticideCandidates({ targetCrop, targetIssue, targetIssueType })
+
+  if (pesticideCandidates.length === 0) {
+    return '候補を絞れませんでした。'
+  }
+
+  const candidateLines = pesticideCandidates
+    .map((candidate) => createCandidateSentence(candidate, field.areaHa))
+    .join('\n')
+
+  return [
+    `${targetIssue || '病害虫'}の候補農薬は以下の通りです。`,
+    candidateLines,
+  ].join('\n\n')
 }
 
 export function buildAgriContext({ field, question }) {

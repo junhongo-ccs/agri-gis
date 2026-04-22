@@ -9,7 +9,12 @@ import {
   formatPestPressure,
   formatRotationStatus,
 } from './agriFormat'
-import { buildAgriContext, createLocalAssistantReply, postChatMessage } from './difyChat'
+import {
+  buildAgriContext,
+  createLocalAssistantReply,
+  createLocalIssueRecommendationReply,
+  postChatMessage,
+} from './difyChat'
 
 const issuePalette = {
   disease: { fill: '#f3c7c2', stroke: '#9a4f48' },
@@ -43,11 +48,23 @@ const pesticideImageCatalog = [
   { name: 'スタークル粒剤', aliases: ['スタークル粒剤'], src: '/pesticides/starkle-granule.png' },
 ]
 
+const continuationPhrases = new Set(['はい', 'はいお願い', 'はい、お願い', 'はいお願いします', 'はい、お願いします', 'お願いします', 'お願い', 'どうぞ', '続けて', '教えて', 'さらに説明して'])
+const issueRequestHints = ['農薬候補', '対応農薬', '農薬を教えて', '防除', '散布量', '使用量', '必要量', '希釈', '病害虫']
+const fieldSummaryHints = ['圃場', '状態', '特徴', '詳細', '作物', '土壌', 'pH', '病害虫', '管理', 'まず見る']
+const offTopicHints = ['かつ丼', '昼ご飯', '昼飯', '雑談']
+const agriSignalHints = [...issueRequestHints, ...fieldSummaryHints, 'いもち病', 'アブラムシ', '病気', '害虫']
+
 function normalizePesticideText(value) {
   return String(value ?? '')
     .normalize('NFKC')
     .replace(/\s+/g, '')
     .replace(/[「」『』（）()【】［］\[\]・,，.。:：]/g, '')
+}
+
+function normalizeChatText(value) {
+  return String(value ?? '')
+    .normalize('NFKC')
+    .replace(/\s+/g, '')
 }
 
 function findPesticideImage(messageContent) {
@@ -58,6 +75,105 @@ function findPesticideImage(messageContent) {
       (item.aliases ?? [item.name]).some((alias) => normalized.includes(normalizePesticideText(alias))),
     ) ?? null
   )
+}
+
+function includesAny(text, hints) {
+  return hints.some((hint) => text.includes(hint))
+}
+
+function isOffTopicChat(text) {
+  if (!text) return false
+  if (includesAny(text, offTopicHints)) return true
+  if (/^(ありがとう|ありがとうございます|感謝|助かりました|どうも)(です|でした|でしたね|！|!|。)?$/.test(text)) return true
+  if (/^(おはよう|こんにちは|こんばんは)(ございます|です|でした|！|!|。)?$/.test(text)) return true
+  return false
+}
+
+function isContinuationChat(text) {
+  return continuationPhrases.has(text)
+}
+
+function looksLikeContinuationReply(text) {
+  if (!text) return false
+  return /^(はい|うん|ええ|お願いします?|お願い|どうぞ|続けて|教えて|それで|そのまま|続行|続け)/.test(text)
+}
+
+function isIssueRequestChat(text) {
+  return includesAny(text, issueRequestHints)
+}
+
+function isFieldSummaryChat(text) {
+  return includesAny(text, fieldSummaryHints)
+}
+
+function hasAgriSignal(text) {
+  return includesAny(text, agriSignalHints)
+}
+
+function createLocalOffTopicReply(field) {
+  const fieldLabel = field?.name ? `「${field.name}」圃場` : 'この画面'
+  const fieldSummary = field ? `${formatCropType(field.cropType)} / ${field.areaHa != null ? `${field.areaHa} ha` : '面積未設定'} / 土壌 pH ${field.soilPh ?? '—'}` : '選択中の圃場'
+  return `${fieldLabel}（${fieldSummary}）の状態、病害虫、農薬候補の相談を受けています。必要ならそのまま圃場の相談に切り替えてください。`
+}
+
+function createLocalContinuationReply() {
+  return '続きは圃場の状態か農薬候補で案内できます。`この圃場の状態は？` か `農薬候補を教えて` と送ってください。'
+}
+
+function resolveChatIntent(text, pendingRoute, selectedField) {
+  const normalized = normalizeChatText(text)
+
+  if (!normalized) {
+    return { kind: 'empty' }
+  }
+
+  if (pendingRoute && (isContinuationChat(normalized) || looksLikeContinuationReply(normalized))) {
+    const hasIssueContext = Boolean(
+      pendingRoute === 'issue_recommendation' ||
+        (selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし') ||
+        (selectedField?.pestPressureNote && selectedField.pestPressureNote !== 'none observed'),
+    )
+
+    if (hasIssueContext) {
+      return {
+        kind: 'agri',
+        route: 'issue_recommendation',
+        questionText: '農薬候補を教えて',
+      }
+    }
+
+    return { kind: 'needs_context' }
+  }
+
+  if (isOffTopicChat(normalized)) {
+    return { kind: 'off_topic' }
+  }
+
+  if (!hasAgriSignal(normalized)) {
+    return { kind: 'off_topic' }
+  }
+
+  if (isIssueRequestChat(normalized)) {
+    return {
+      kind: 'agri',
+      route: 'issue_recommendation',
+      questionText: text,
+    }
+  }
+
+  if (isFieldSummaryChat(normalized)) {
+    return {
+      kind: 'agri',
+      route: 'field_summary',
+      questionText: text,
+    }
+  }
+
+  return {
+    kind: 'agri',
+    route: 'field_summary',
+    questionText: text,
+  }
 }
 
 function createMessageId() {
@@ -294,6 +410,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [isFieldDetailsOpen, setIsFieldDetailsOpen] = useState(false)
+  const [pendingRoute, setPendingRoute] = useState('')
   const chatEndRef = useRef(null)
 
   const difyEndpoint =
@@ -357,6 +474,7 @@ function App() {
 
   useEffect(() => {
     setIsFieldDetailsOpen(false)
+    setPendingRoute('')
   }, [selectedField?.id])
 
   const renderedChatMessages = useMemo(
@@ -372,20 +490,85 @@ function App() {
     const text = messageText.trim()
     if (!text || isSending) return
 
+    const normalizedText = normalizeChatText(text)
+    const hasIssueContext = Boolean(selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし')
+    const shouldUseLocalIssueRoute =
+      hasIssueContext &&
+      (pendingRoute === 'issue_recommendation' ||
+        isContinuationChat(normalizedText) ||
+        looksLikeContinuationReply(normalizedText) ||
+        isIssueRequestChat(normalizedText))
+
+    if (isOffTopicChat(normalizedText)) {
+      setChatMessages((current) => [
+        ...current,
+        createChatMessage('user', text),
+        createChatMessage('assistant', createLocalOffTopicReply(selectedField), { source: 'local-off-topic' }),
+      ])
+      setChatInput('')
+      setChatError('')
+      setPendingRoute('')
+      return
+    }
+
+    if (shouldUseLocalIssueRoute) {
+      setChatMessages((current) => [
+        ...current,
+        createChatMessage('user', text),
+        createChatMessage('assistant', createLocalIssueRecommendationReply({ field: selectedField }), {
+          source: 'local-issue-route',
+        }),
+      ])
+      setChatInput('')
+      setChatError('')
+      setPendingRoute('')
+      return
+    }
+
+    const intent = resolveChatIntent(text, pendingRoute, selectedField)
+    if (intent.kind === 'off_topic') {
+      setChatMessages((current) => [
+        ...current,
+        createChatMessage('user', text),
+        createChatMessage('assistant', createLocalOffTopicReply(selectedField), { source: 'local-off-topic' }),
+      ])
+      setChatInput('')
+      setChatError('')
+      setPendingRoute('')
+      return
+    }
+
+    const questionText = intent.questionText ?? text
+    if (intent.kind === 'needs_context') {
+      setChatMessages((current) => [
+        ...current,
+        createChatMessage('user', text),
+        createChatMessage('assistant', createLocalContinuationReply(), { source: 'local-continuation' }),
+      ])
+      setChatInput('')
+      setChatError('')
+      return
+    }
+
     setChatMessages((current) => [...current, createChatMessage('user', text)])
     setChatInput('')
     setChatError('')
     setIsSending(true)
 
-    const context = buildAgriContext({ field: selectedField, question: text })
+    const context = buildAgriContext({ field: selectedField, question: questionText })
 
     if (!difyEndpoint) {
       setChatMessages((current) => [
         ...current,
-        createChatMessage('assistant', createLocalAssistantReply({ question: text, field: selectedField }), {
+        createChatMessage('assistant', createLocalAssistantReply({ question: questionText, field: selectedField }), {
           source: 'local-fallback',
         }),
       ])
+      setPendingRoute(
+        intent.route === 'field_summary' && selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし'
+          ? 'issue_recommendation'
+          : '',
+      )
       setIsSending(false)
       return
     }
@@ -395,7 +578,7 @@ function App() {
         endpoint: difyEndpoint,
         userId: difyUserId,
         conversationId,
-        question: text,
+        question: questionText,
         context,
       })
       setConversationId(result.conversationId ?? conversationId)
@@ -403,16 +586,26 @@ function App() {
         ...current,
         createChatMessage('assistant', result.answer || '返答が届きませんでした。', { source: 'dify' }),
       ])
+      setPendingRoute(
+        intent.route === 'field_summary' && selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし'
+          ? 'issue_recommendation'
+          : '',
+      )
     } catch (sendError) {
       setChatError(toUserFacingChatError(sendError))
       setChatMessages((current) => [
         ...current,
         createChatMessage(
           'assistant',
-          `${createLocalAssistantReply({ question: text, field: selectedField })} いまはローカル代替応答を表示しています。`,
+          `${createLocalAssistantReply({ question: questionText, field: selectedField })} いまはローカル代替応答を表示しています。`,
           { source: 'fallback-after-error' },
         ),
       ])
+      setPendingRoute(
+        intent.route === 'field_summary' && selectedField?.suspectedPest && selectedField.suspectedPest !== 'なし'
+          ? 'issue_recommendation'
+          : '',
+      )
     } finally {
       setIsSending(false)
     }
